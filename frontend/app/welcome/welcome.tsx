@@ -1,16 +1,17 @@
-import { ChatItem } from "~/components/ChatItem";
+import { ChatItem } from "~/components/chat-item";
+import { Conversation } from "~/components/conversation";
 
 export function Welcome() {
   return (
     <main className="flex h-screen">
-      <div className="flex w-[200px] h-full bg-red-50 flex-col">
-        <ChatItem />
+      <div className="flex flex-col bg-red-50 w-[200px] h-full">
+        <ChatItem isActive />
         <ChatItem />
         <ChatItem />
       </div>
-      <div className="flex grow bg-green-50">
-        chat
-      </div>
+      <Conversation>
+        
+      </Conversation>
     </main>
   );
 }
