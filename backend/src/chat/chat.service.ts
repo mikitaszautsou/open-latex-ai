@@ -11,7 +11,7 @@ export class ChatService {
     create(createChatDto: CreateChatDto): Chat {
         const newChat: Chat = {
             id: uuidv4(),
-            title: createChatDto.title,
+            title: createChatDto.title || `New Chat ${this.chats.length + 1}`,
             messages: [],
         };
         this.chats.push(newChat);
