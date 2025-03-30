@@ -10,11 +10,6 @@ import { chatApi } from "~/services/chat-api";
 export function Welcome() {
   const { data: chats, isLoading } = useChats();
   const navigate = useNavigate();
-  useEffect(() => {
-    setTimeout(() => {
-      navigate(`/chat/latest`)
-    }, 3000)
-  })
   const createChatMutation = useMutation({
     mutationFn: () => chatApi.createChat(),
     onSuccess: (newChat) => {
@@ -32,7 +27,7 @@ export function Welcome() {
           <button onClick={handleNewChat}>New Chat</button>
         </div>
         {chats?.map(c => (
-          <ChatItem isActive title={c.title} />
+          <ChatItem isActive chat={c} />
         ))}
       </div>
       <Conversation>
