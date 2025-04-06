@@ -14,7 +14,7 @@ export class MessageController {
     }
 
     @Post()
-    create(@Param('chatId') chatId: string, @Body() createMessageDto: CreateMessageDto): Message {
+    create(@Param('chatId') chatId: string, @Body() createMessageDto: CreateMessageDto): Promise<Message> {
         return this.messageService.create(chatId, createMessageDto);
     }
 }

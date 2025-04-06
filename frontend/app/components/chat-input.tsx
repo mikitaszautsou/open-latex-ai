@@ -13,7 +13,7 @@ export function ChatInput({ className, chatId }: ChatInputProps) {
 
   const [message, setMessage] = useState('');
 
-  const sendMessageMutation = useMutation({
+  const { mutate: sendMessageMutation, isPending: isSendingMessage } = useMutation({
     mutationFn: () => chatApi.createMessage(chatId!, {
       content: message,
       role: 'user',
@@ -25,7 +25,7 @@ export function ChatInput({ className, chatId }: ChatInputProps) {
   })
 
   const handleSend = () => {
-    sendMessageMutation.mutate();
+    sendMessageMutation();
   }
   return (
     <div className={clsx("flex items-center gap-2 bg-[#8AB2A6] p-3", className)}>
@@ -34,7 +34,7 @@ export function ChatInput({ className, chatId }: ChatInputProps) {
         value={message}
         onChange={(e) => setMessage(e.target.value)}
       />
-      <button className='bg-red-300 px-4 py-2 rounded-md whitespace-nowrap' onClick={handleSend}>Send</button>
+      <button className={clsx('bg-red-300 px-4 py-2 rounded-md whitespace-nowrap', isSendingMessage && 'cursor-not-allowed')} onClick={handleSend} >Send</button>
     </div>
   )
 }

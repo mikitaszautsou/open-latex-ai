@@ -21,7 +21,7 @@ export function Welcome() {
     createChatMutation.mutate();
   }
   return (
-    <main className="flex h-screen">
+    <main className="flex h-screen text-black">
       <div className="flex flex-col bg-red-50 min-w-[200px] h-full"> 
         <div className="flex justify-center">
           <button onClick={handleNewChat}>New Chat</button>
