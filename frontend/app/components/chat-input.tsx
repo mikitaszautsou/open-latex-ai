@@ -25,6 +25,7 @@ export function ChatInput({ className, chatId }: ChatInputProps) {
   })
 
   const handleSend = () => {
+    if (isSendingMessage) return;
     sendMessageMutation();
   }
   return (
@@ -32,6 +33,7 @@ export function ChatInput({ className, chatId }: ChatInputProps) {
       <textarea
         className="flex-1 px-3 py-2 border border-transparent rounded-md outline-none"
         value={message}
+        disabled={isSendingMessage}
         onChange={(e) => setMessage(e.target.value)}
       />
       <button className={clsx('bg-red-300 px-4 py-2 rounded-md whitespace-nowrap', isSendingMessage && 'cursor-not-allowed')} onClick={handleSend} >Send</button>

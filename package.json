@@ -1,0 +1,16 @@
+{
+  "name": "open-latex-ai",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "concurrently": "^9.1.2"
+  },
+  "scripts": {
+    "dev": "concurrently --kill-others -n \"BACKEND,FRONTEND\" -c \"auto\" \"cd backend && bun start:dev\" \"cd frontend && bun dev\""
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

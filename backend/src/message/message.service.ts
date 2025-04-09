@@ -5,6 +5,7 @@ import { CreateMessageDto } from "./dto/create-message.dto";
 import { v4 as uuidv4 } from 'uuid';
 import { MessageRole } from "./types/message-role.enum";
 import { AssistantFactoryService } from "src/assistant/assistant-factory.service";
+import { AIProvider } from "src/assistant/ai-provider.type";
 
 @Injectable()
 export class MessageService {
@@ -24,12 +25,12 @@ export class MessageService {
         }
         this.messages.push(newMessage);
         if (createMessageDto.role === MessageRole.USER) {
-            await this.generateAIResponse(chatId)
+            await this.generateAIResponse(chatId, createMessageDto.provider)
         }
         return newMessage;
     }
-    private async generateAIResponse(chatId: string): Promise<Message> {
-        const assistantService = this.assistantFactoryService.getService();
+    private async generateAIResponse(chatId: string, provider?: AIProvider): Promise<Message> {
+        const assistantService = this.assistantFactoryService.getService(provider);
         const messages = await this.findAllByChatId(chatId);
         const responseContent = await assistantService.generateResponse(messages);
         const assistantResponse: Message = {
