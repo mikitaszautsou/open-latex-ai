@@ -36,7 +36,7 @@ export function ChatInput({ className, chatId }: ChatInputProps) {
         disabled={isSendingMessage}
         onChange={(e) => setMessage(e.target.value)}
       />
-      <button className={clsx('bg-red-300 px-4 py-2 rounded-md whitespace-nowrap', isSendingMessage && 'cursor-not-allowed')} onClick={handleSend} >Send</button>
+      <button className={clsx('bg-green-600 px-4 py-2 rounded-md whitespace-nowrap', isSendingMessage && 'cursor-not-allowed bg-yellow-600')} onClick={handleSend}>{isSendingMessage ? "⏳" : "📤"}</button>
     </div>
   )
 }
