@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { queryClient } from '~/query-client';
-import { chatApi } from '~/services/chat-api';
+import { chatApi, ROLE } from '~/services/chat-api';
 
 export type ChatInputProps = {
   className?: string;
@@ -16,7 +16,7 @@ export function ChatInput({ className, chatId }: ChatInputProps) {
   const { mutate: sendMessageMutation, isPending: isSendingMessage } = useMutation({
     mutationFn: () => chatApi.createMessage(chatId!, {
       content: message,
-      role: 'user',
+      role: ROLE.USER,
     }),
     onSuccess: () => {
       setMessage('');
@@ -29,9 +29,9 @@ export function ChatInput({ className, chatId }: ChatInputProps) {
     sendMessageMutation();
   }
   return (
-    <div className={clsx("flex items-center gap-2 bg-[#8AB2A6] p-3", className)}>
+    <div className={clsx("flex items-center gap-2 bg-[#8AB2A6] p-3", isSendingMessage && 'cursor-not-allowed', className)}>
       <textarea
-        className="flex-1 px-3 py-2 border border-transparent rounded-md outline-none"
+        className={clsx("flex-1 px-3 py-2 border border-transparent rounded-md outline-none", isSendingMessage && 'cursor-not-allowed')}
         value={message}
         disabled={isSendingMessage}
         onChange={(e) => setMessage(e.target.value)}

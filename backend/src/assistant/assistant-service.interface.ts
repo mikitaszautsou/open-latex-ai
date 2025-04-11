@@ -1,7 +1,8 @@
+import { Role } from "generated/prisma";
 
 export interface Message {
     content: string;
-    role: 'assistant' | 'user';
+    role: Role;
 }
 
 export interface AssistantService {

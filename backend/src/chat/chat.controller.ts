@@ -8,17 +8,17 @@ export class ChatController {
     constructor(private readonly chatService: ChatService) {}
 
     @Post()
-    create(@Body() CreateChatDto: CreateChatDto): Chat {
+    async create(@Body() CreateChatDto: CreateChatDto): Promise<Chat> {
         return this.chatService.create(CreateChatDto);
     }
 
     @Get()
-    findAll(): Chat[] {
+    async findAll(): Promise<Chat[]> {
         return this.chatService.findAll();
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string): Chat {
+    async findOne(@Param('id') id: string): Promise<Chat | null> {
         const chat = this.chatService.findOne(id);
         if (!chat) {
             throw new NotFoundException(`Chat with ID ${id} not found`);
@@ -26,5 +26,4 @@ export class ChatController {
         return chat;
     }
     
-
 }

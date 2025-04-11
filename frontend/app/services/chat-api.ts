@@ -13,13 +13,18 @@ export interface Message {
     id: string;
     chatId: string;
     content: string;
-    role: "assistant" | "user";
+    role: ROLE;
 }
 
 export interface CreateMessageDto {
     content: string;
-    role: 'user' | 'assistant';
+    role: ROLE;
 }
+
+export enum ROLE {
+    USER =  'USER',
+    ASSISTANT = 'ASSISTANT'
+};
 
 export const chatApi = {
     getChats: async (): Promise<Chat[]> => {

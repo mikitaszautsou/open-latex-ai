@@ -1,6 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { AssistantService, Message } from "./assistant-service.interface";
 import Anthropic from "@anthropic-ai/sdk";
+import { Role } from "generated/prisma";
+import { MessageParam } from "@anthropic-ai/sdk/resources";
 
 @Injectable()
 export class ClaudeService implements AssistantService {
@@ -17,9 +19,9 @@ export class ClaudeService implements AssistantService {
 
     async generateResponse(messages: Message[]): Promise<string> {
         const anthropicMessages = messages.map(msg => ({
-            role: msg.role,
+            role: msg.role === Role.USER ? 'user' : 'assistant',
             content: msg.content
-        }));
+        }) as MessageParam);
 
         const response = await this.client.messages.create({
             model: this.model,

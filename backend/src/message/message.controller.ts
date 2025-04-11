@@ -9,12 +9,12 @@ export class MessageController {
     constructor(private readonly messageService: MessageService) {}
 
     @Get()
-    findAll(@Param('chatId') chatId: string): Message[] {
+    async findAll(@Param('chatId') chatId: string): Promise<Message[]> {
         return this.messageService.findAllByChatId(chatId);
     }
 
     @Post()
-    create(@Param('chatId') chatId: string, @Body() createMessageDto: CreateMessageDto): Promise<Message> {
+    async create(@Param('chatId') chatId: string, @Body() createMessageDto: CreateMessageDto): Promise<Message> {
         return this.messageService.create(chatId, createMessageDto);
     }
 }

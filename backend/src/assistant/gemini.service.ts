@@ -1,10 +1,11 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { AssistantService, Message } from "./assistant-service.interface";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { Role } from "generated/prisma";
 
 const ROLES_MAPPING = {
-    'assistant': 'model',
-    'user': 'user',
+    [Role.ASSISTANT]: 'model',
+    [Role.USER]: 'user',
 }
 
 @Injectable()
