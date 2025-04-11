@@ -1,6 +1,6 @@
 import axios from "axios";
 export const api = axios.create({
-    baseURL: "http://localhost:3000", // Your NestJS backend URL
+    baseURL: "https://open-latex-ai.onrender.com",
     headers: {
       "Content-Type": "application/json",
     },
