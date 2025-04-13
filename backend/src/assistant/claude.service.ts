@@ -7,7 +7,7 @@ import { MessageParam } from "@anthropic-ai/sdk/resources";
 @Injectable()
 export class ClaudeService implements AssistantService {
 
-    private readonly model: string = 'claude-3-7-sonnet-20250219';
+    private readonly model: string = 'claude-3-7-sonnet-latest';
     private readonly client: Anthropic;
 
     constructor() {
@@ -15,6 +15,9 @@ export class ClaudeService implements AssistantService {
         this.client = new Anthropic({
             apiKey: process.env.CLAUDE_API_KEY
         })
+    }
+    generateTitleAndEmoji(messageContent: string): Promise<{ title: string; emoji: string; }> {
+        throw new Error("Method not implemented.");
     }
 
     async generateResponse(messages: Message[]): Promise<string> {

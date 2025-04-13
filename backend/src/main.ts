@@ -13,10 +13,13 @@ async function bootstrap() {
     forbidUnknownValues: true,
     transform: true
   }));
+  // app.enableCors({
+  //   origin: process.env.FRONTEND_URL ?? 'http://localhost:5173', // Your frontend URL
+  //   credentials: true,
+  // });
   app.enableCors({
-    origin: process.env.FRONTEND_URL ?? 'http://localhost:5173', // Your frontend URL
-    credentials: true,
-  });
+    origin: '*',
+  })
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

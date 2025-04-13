@@ -10,7 +10,7 @@ import { chatApi } from "~/services/chat-api";
 export function Welcome() {
   const { data: chats, isLoading } = useChats();
   const navigate = useNavigate();
-  const createChatMutation = useMutation({
+  const {mutate: createChatMutation, isPending } = useMutation({
     mutationFn: () => chatApi.createChat(),
     onSuccess: (newChat) => {
       queryClient.invalidateQueries({ queryKey: ['chats'] });
@@ -18,26 +18,22 @@ export function Welcome() {
     },
   });
   const handleNewChat = () => {
-    createChatMutation.mutate();
+    createChatMutation();
   }
   const [isChatsOpen, setChatsOpen] = useState(true);
   return (
-    <main className="flex flex-col max-h-screen text-black">
-      <div className="flex items-center bg-white px-3 h-9">
-        <button className="text-[30px] cursor-pointer" onClick={() => setChatsOpen(!isChatsOpen)}>{!isChatsOpen ? "↕️" : "⏫"}</button>
+    <main className="flex flex-col h-dvh max-h-dvh text-black">
+      <div className="flex items-center gap-1 bg-white px-3 h-12">
+        <button className="text-[30px] cursor-pointer" onClick={() => setChatsOpen(!isChatsOpen)}>{!isChatsOpen ? "📘" : "📖"}</button>
+        <button onClick={handleNewChat} className="mb-[-4px] text-[24px] cursor-pointer" disabled={isPending}>{isPending ? "⌛" : "📝"}</button>
         </div>
-      <div className="flex min-h-0">
+      <div className="flex min-h-0 grow">
         {isChatsOpen && <div className="flex flex-col bg-red-50 min-w-[200px] overflow-auto"> 
-          <div className="flex justify-center">
-            <button onClick={handleNewChat} className="text-[40px]">🆕</button>
-          </div>
           {chats?.map(c => (
             <ChatItem isActive chat={c} />
           ))}
         </div>}
-        <Conversation>
-
-        </Conversation>
+        <Conversation />
       </div>
     </main>
   );

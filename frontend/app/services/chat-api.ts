@@ -7,6 +7,7 @@ export interface CreateChatDto {
 export interface Chat {
     id: string;
     title: string;
+    emoji?: string;
 }
 
 export interface Message {

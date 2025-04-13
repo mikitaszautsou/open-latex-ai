@@ -7,4 +7,5 @@ export interface Message {
 
 export interface AssistantService {
     generateResponse(messages: Message[]): Promise<string>;
+    generateTitleAndEmoji(messageContent: string): Promise<{ title: string; emoji: string }>;
 }

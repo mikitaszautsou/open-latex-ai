@@ -13,14 +13,15 @@ export function ChatItem({ chat, isActive }: ChatItemProps) {
         navgiate(`/chat/${chat.id}`)
     }
     return (<div className={clsx("flex items-center gap-2 px-3 py-3 cursor-pointer", isActive && 'bg-blue-50')} onClick={handleClick}>
-        <div className="bg-[#8F87F1] rounded-sm w-10 h-10">
+        <div className="flex justify-center items-center bg-[#8F87F1] rounded-sm w-10 h-10 text-[24px]">
+            {chat.emoji}
         </div>
         <div className="flex flex-col">
             <div className="font-bold">
                 {chat.title}
             </div>
             <div>
-                Chat
+                ...
             </div>
         </div>
 
