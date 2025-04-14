@@ -1,83 +1,84 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
 import { Chat } from './entities/chat.entity';
 import { CreateChatDto } from './dto/create-chat.dto';
-import { v4 as uuidv4 } from 'uuid'; // You'll need to install this: npm install uuid
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AssistantFactoryService } from 'src/assistant/assistant-factory.service';
-import { AIProvider } from 'src/assistant/ai-provider.type';
+import { AssistantFactoryService } from 'src/assistant/assistant-factory.service'; 
+import { AIProvider } from 'src/assistant/ai-provider.type'; 
 
 @Injectable()
 export class ChatService {
     private readonly logger = new Logger(ChatService.name);
 
-    constructor(private readonly prisma: PrismaService, private readonly assistantFactoryService: AssistantFactoryService) { };
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly assistantFactoryService: AssistantFactoryService
+    ) {}
 
-    async create(createChatDto: CreateChatDto): Promise<Chat> {
-        const initialTitle = createChatDto.title || `New Chat...`; // Use a temporary title
+    async create(createChatDto: CreateChatDto, userId: string): Promise<Chat> {
         const newChat = await this.prisma.chat.create({
             data: {
-                title: initialTitle,
-                // emoji: '⏳' // Optional: Set a temporary "loading" emoji
+                title: createChatDto.title || `New Chat`,
+                userId: userId,
             },
         });
-        this.logger.log(`Created new chat with temp title: ID ${newChat.id}`);
-        return newChat; // Return the chat with the temp title initially
+        if (!createChatDto.title) {
+            return this.prisma.chat.update({
+                where: { id: newChat.id },
+                data: { title: `Chat ${newChat.id.substring(0, 8)}` },
+            });
+        }
+        return newChat;
     }
 
-
-    async findAll(): Promise<Chat[]> {
+    async findAll(userId: string): Promise<Chat[]> {
         return this.prisma.chat.findMany({
+            where: { userId }, // Filter by user
             orderBy: {
                 createdAt: 'desc',
-            }
+            },
         });
     }
 
-    async findOne(id: string): Promise<Chat | null> {
+    async findOne(id: string, userId: string): Promise<Chat | null> {
         const chat = await this.prisma.chat.findUnique({
             where: { id },
         });
+        if (chat && chat.userId !== userId) {
+             throw new ForbiddenException('You do not have permission to access this chat.');
+        }
         return chat;
     }
 
-    async ensureChatExists(id: string): Promise<void> {
+    async ensureChatExists(id: string, userId: string): Promise<void> {
         const chat = await this.prisma.chat.findUnique({
             where: { id },
-            select: { id: true }
-        })
+            select: { id: true, userId: true },
+        });
         if (!chat) {
-            throw new NotFoundException(`Chat with ID ${id} not found`)
+            throw new NotFoundException(`Chat with ID ${id} not found`);
+        }
+        if (chat.userId !== userId) {
+            throw new ForbiddenException(`You do not have permission to access chat ${id}.`);
         }
     }
-    async generateAndSetTitleAndEmoji(chatId: string, firstMessageContent: string, provider?: AIProvider): Promise<void> {
+
+     async generateAndSetTitleAndEmoji(chatId: string, messageContent: string, userId: string, provider?: AIProvider): Promise<void> {
         try {
-            this.logger.log(`Generating title/emoji for chat ${chatId} using provider: ${provider || 'default'}`);
+            await this.ensureChatExists(chatId, userId);
+
+            this.logger.log(`Generating title and emoji for chat ${chatId} using provider ${provider || 'default'}`);
             const assistantService = this.assistantFactoryService.getService(provider);
-            const { title, emoji } = await assistantService.generateTitleAndEmoji(firstMessageContent);
+            const { title, emoji } = await assistantService.generateTitleAndEmoji(messageContent);
 
-            this.logger.log(`Generated Title: "${title}", Emoji: ${emoji} for chat ${chatId}`);
+            this.logger.log(`Generated title: "${title}", emoji: ${emoji} for chat ${chatId}`);
 
-            await this.prisma.chat.update({
+             await this.prisma.chat.update({
                 where: { id: chatId },
-                data: {
-                    title: title || `Chat ${chatId.substring(0, 8)}`, // Fallback if title is empty
-                    emoji: emoji || '💬', // Fallback if emoji is empty
-                },
+                data: { title, emoji },
             });
-            this.logger.log(`Successfully updated title and emoji for chat ${chatId}`);
+             this.logger.log(`Successfully updated chat ${chatId} with title and emoji.`);
         } catch (error) {
-            this.logger.error(`Failed to generate or set title/emoji for chat ${chatId}:`, error);
-            // Don't throw error here, just log it. The chat creation/message sending shouldn't fail because of this.
-            // Optionally update with a default title/emoji on error if not already done in AI service
-            await this.prisma.chat.update({
-                where: { id: chatId },
-                data: {
-                    title: `Chat ${chatId.substring(0, 8)}`, // Ensure a title exists
-                    // Keep existing emoji or set default if desired
-                },
-            }).catch(updateError => {
-                this.logger.error(`Failed to update chat ${chatId} with fallback title after generation error:`, updateError);
-            });
+             this.logger.error(`Failed to generate or set title/emoji for chat ${chatId}: ${error.message}`, error.stack);
         }
     }
 }

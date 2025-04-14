@@ -18,8 +18,12 @@ model Chat {
   title     String
   emoji     String?
   messages  Message[]
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  @@index([userId])
 }
 
 model Message {
@@ -33,6 +37,15 @@ model Message {
   chat   Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
 
   @@index([chatId])
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String // Will store hashed password
+  chats     Chat[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Role {
