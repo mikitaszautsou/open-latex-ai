@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard'; // Can be used for a /profile endpoint later
 import { RegisterDto } from './dto/register.dto';
 import { User } from '@prisma/client';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -10,9 +11,8 @@ export class AuthController {
 
     @HttpCode(HttpStatus.OK)
     @Post('login')
-    async login(@Body() req: Omit<User, 'password'>) {
-        const response = await this.authService.login(req);
-        console.log({ authResponse: response })
+    async login(@Body() loginDto: LoginDto) {
+        const response = await this.authService.login(loginDto.username, loginDto.password);
         return response;
     }
 
