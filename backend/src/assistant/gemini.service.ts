@@ -23,7 +23,7 @@ export class GeminiService implements AssistantService, OnModuleInit {
         }
         this.genAI = new GoogleGenerativeAI(apiKey);
         this.model = this.genAI.getGenerativeModel({
-            model: "gemini-2.5-pro-exp-03-25"
+            model: process.env.GEMINI_MODEL
         })
     }
     async generateTitleAndEmoji(messageContent: string): Promise<{ title: string; emoji: string; }> {
