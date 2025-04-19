@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import clsx from "clsx";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { queryClient } from "~/query-client";
 import { chatApi, ROLE } from "~/services/chat-api";
 
@@ -9,8 +9,11 @@ export type ChatInputProps = {
   chatId?: string;
 };
 
+const MAX_TEXTAREA_HEIGHT = "20rem"; // Approx 10 rows, adjust based on your styling
+
 export function ChatInput({ className, chatId }: ChatInputProps) {
   const [message, setMessage] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { mutate: sendMessageMutation, isPending: isSendingMessage } =
     useMutation({
@@ -22,38 +25,51 @@ export function ChatInput({ className, chatId }: ChatInputProps) {
       onSuccess: () => {
         setMessage("");
         queryClient.invalidateQueries({ queryKey: ["messages", chatId] });
+        if (textareaRef.current) {
+          textareaRef.current.style.height = "auto";
+        }
       },
     });
 
   const handleSend = () => {
-    // Prevent sending if already sending or if the message is empty/whitespace only
     if (isSendingMessage || !message.trim()) return;
     sendMessageMutation();
   };
 
-  const handleKeyDown = (e: KeyboardEvent) => {
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }, [message]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
   };
+
   const isDisabled = isSendingMessage || !message.trim();
 
   return (
     <div
       className={clsx(
-        "flex items-center gap-2 bg-[#ffffff] p-3 shadow-[0px_4px_12px_rgba(0,0,0,0.1)]",
+        "flex items-start gap-2 bg-[#ffffff] p-3 shadow-[0px_4px_12px_rgba(0,0,0,0.1)]",
         isSendingMessage && "cursor-not-allowed",
         className
       )}
     >
       <textarea
+        ref={textareaRef}
         className={clsx(
-          "flex-1 px-3 py-2 border border-transparent rounded-md outline-none bg-[#ebf2fc] resize-none", // Added resize-none for consistency
+          "flex-1 px-3 py-2 border border-transparent rounded-2xl outline-none bg-[#fafafa] resize-none shadow-[0_0_0_1px_rgba(0,0,0,0.1)] overflow-y-auto",
           isSendingMessage && "cursor-not-allowed"
         )}
         placeholder="Type your message..."
         rows={1}
+        style={{ maxHeight: MAX_TEXTAREA_HEIGHT }}
         value={message}
         disabled={isSendingMessage}
         onChange={(e) => setMessage(e.target.value)}
@@ -61,7 +77,7 @@ export function ChatInput({ className, chatId }: ChatInputProps) {
       />
       <button
         className={clsx(
-          "bg-[#2886fe] text-white font-semibold px-4 py-2 rounded-full whitespace-nowrap transition-colors h-10 w-10 flex items-center justify-center shrink-0", // Added shrink-0
+          "bg-[#0061ff] text-white font-semibold px-4 py-2 rounded-full whitespace-nowrap transition-colors h-10 w-10 flex items-center justify-center shrink-0",
           isDisabled && "cursor-not-allowed bg-[#dedede] text-[#aeaeae]"
         )}
         onClick={handleSend}

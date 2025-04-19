@@ -40,7 +40,7 @@ export function Conversation({ onGoBackClick }: ConversationProps) {
           </svg>
         </button>
         <span className="text-2xl">{selectedChat?.emoji}</span>{" "}
-        <span className="font-bold">{selectedChat?.title}</span>
+        <span className="text-lg font-bold">{selectedChat?.title}</span>
       </div>
       <div
         className="flex flex-col gap-4 px-4 pt-19 pb-27 overflow-y-auto"
