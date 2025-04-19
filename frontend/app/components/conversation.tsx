@@ -25,9 +25,12 @@ export function Conversation({ onGoBackClick }: ConversationProps) {
   const selectedChat = chats?.find((c) => c.id === chatId);
 
   return (
-    <div className="relative flex flex-col flex-1 bg-[#f9f9f9] min-w-0 grow text">
-      <div className="flex items-center gap-3 bg-white px-3 shadow-[0px_4px_12px_rgba(0,0,0,0.1)] fixed top-0 w-full h-15">
-        <button className="text-[30px] cursor-pointer" onClick={onGoBackClick}>
+    <div className="relative flex flex-col flex-1 bg-[#eff1f5] min-w-0 grow text">
+      <div className="flex items-center gap-3 bg-white px-4 shadow-[0px_4px_12px_rgba(0,0,0,0.1)] fixed top-0 w-full h-15">
+        <button
+          className="text-[30px] cursor-pointer w-7 flex justify-center"
+          onClick={onGoBackClick}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 320 512"
@@ -40,7 +43,7 @@ export function Conversation({ onGoBackClick }: ConversationProps) {
         <span className="font-bold">{selectedChat?.title}</span>
       </div>
       <div
-        className="flex flex-col gap-4 px-4 pt-25 pb-200 overflow-y-auto"
+        className="flex flex-col gap-4 px-4 pt-19 pb-27 overflow-y-auto"
         ref={scrollContainerRef}
       >
         {messages?.map((m) => (

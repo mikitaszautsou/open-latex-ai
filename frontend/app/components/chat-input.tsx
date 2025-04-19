@@ -48,12 +48,23 @@ export function ChatInput({ className, chatId }: ChatInputProps) {
       />
       <button
         className={clsx(
-          "bg-green-600 px-4 py-2 rounded-md whitespace-nowrap",
-          isSendingMessage && "cursor-not-allowed bg-yellow-600"
+          "bg-[#2886fe] text-white font-semibold px-4 py-2 rounded-full whitespace-nowrap transition-colors h-10 w-10 flex items-center justify-center",
+          isSendingMessage && "cursor-not-allowed bg-[#dedede] text-[#aeaeae]"
         )}
         onClick={handleSend}
       >
-        {isSendingMessage ? "⏳" : "📤"}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 122.56 122.88"
+          className={clsx(
+            "fill-white min-w-5 ml-[-3px] mb-[-2px] transition-colors",
+            isSendingMessage && "fill-[#aeaeae]"
+          )}
+        >
+          <defs></defs>
+          <title>send</title>
+          <path d="M2.33,44.58,117.33.37a3.63,3.63,0,0,1,5,4.56l-44,115.61h0a3.63,3.63,0,0,1-6.67.28L53.93,84.14,89.12,33.77,38.85,68.86,2.06,51.24a3.63,3.63,0,0,1,.27-6.66Z" />
+        </svg>
       </button>
     </div>
   );

@@ -1,5 +1,5 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { ChatItem } from "~/components/chat-item";
 import { Conversation } from "~/components/conversation";
@@ -63,29 +63,6 @@ export function Welcome() {
           </div>
         </div>
       </div>
-      {/* <div className="flex items-center gap-3 bg-white px-3 shadow-[0px_4px_12px_rgba(0,0,0,0.1)] fixed top-0 w-full h-15">
-        <button
-          className="text-[30px] cursor-pointer"
-          onClick={() => setChatsOpen(!isChatsOpen)}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 320 512"
-            className="w-3"
-          >
-            <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192" />
-          </svg>
-        </button>
-        <button
-          onClick={handleNewChat}
-          className="text-[24px] cursor-pointer"
-          disabled={isPending}
-        >
-          {isPending ? "⌛" : "📝"}
-        </button>
-        <span className="text-3xl">{selectedChat?.emoji}</span>{" "}
-        {selectedChat?.title}
-      </div> */}
     </main>
   );
 }
