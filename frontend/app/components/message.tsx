@@ -12,11 +12,11 @@ export type MessageProps = {
 
 export function Message({ author, message, role }: MessageProps) {
     return (
-        <div className={clsx('flex p-2.5 rounded-sm', role === ROLE.USER ? 'bg-[#8F87F1]' : 'bg-[#F5C45E]')}>
+        <div className={clsx('flex p-2.5 rounded-sm', role === ROLE.USER ? 'bg-[#2886fe] text-white' : 'bg-[#efefef]')}>
             <div className='hidden md:flex justify-center items-center bg-[#F1E7E7] rounded-md min-w-[60px] max-w-[60px] min-h-[60px] max-h-[60px] text-[40px]' >{role === ROLE.USER ? '👦🏻' : '🤖'}</div>
             <div className='pl-2 w-full overflow-hidden'>
                 <div className="font-semibold">{author}</div>
-                <div className="dark:prose-invert max-w-none text-sm markdown-content prose">
+                <div className="dark:prose-invert max-w-none markdown-content prose">
                     <ReactMarkdown 
                         remarkPlugins={[remarkGfm]}
                         components={{
