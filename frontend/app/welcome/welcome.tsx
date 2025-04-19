@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { ChatItem } from "~/components/chat-item";
 import { Conversation } from "~/components/conversation";
@@ -28,6 +28,13 @@ export function Welcome() {
   };
   const selectedChat = chats?.find((c) => c.id === chatId);
   const [isChatsOpen, setChatsOpen] = useState(true);
+  useEffect(() => {
+    if (selectedChat) {
+      document.title = `${selectedChat.emoji ?? ""} ${
+        selectedChat.title ?? ""
+      }`;
+    }
+  }, [selectedChat]);
   return (
     <main className="flex flex-col h-dvh max-h-dvh text-black">
       <div className="flex min-h-0 basis-0 grow">
