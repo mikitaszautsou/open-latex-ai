@@ -11,6 +11,12 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./query-client";
+import {
+  PersistQueryClientProvider,
+  type Persister,
+} from "@tanstack/react-query-persist-client";
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
+import { QueryClientWrapper } from "./components/query-client-wrapper";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -35,7 +41,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        <QueryClientWrapper>{children}</QueryClientWrapper>
         <ScrollRestoration />
         <Scripts />
       </body>

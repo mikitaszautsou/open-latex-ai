@@ -7,25 +7,13 @@ import { useChats } from "~/hooks/use-chats";
 import { queryClient } from "~/query-client";
 import { chatApi } from "~/services/chat-api";
 import clsx from "clsx";
+import { ChatsScreen } from "~/screens/ChatsScreen";
 
 export function Welcome() {
   const { data: chats, isLoading } = useChats();
   const { chatId } = useParams();
-  const navigate = useNavigate();
-  const { mutate: createChatMutation, isPending } = useMutation({
-    mutationFn: () => chatApi.createChat(),
-    onSuccess: (newChat) => {
-      queryClient.invalidateQueries({ queryKey: ["chats"] });
-      navigate(`/chat/${newChat.id}`);
-    },
-  });
-  const handleNewChat = () => {
-    createChatMutation();
-  };
-  const handleChatClick = (id: string) => {
-    navigate(`/chat/${id}`);
-    setChatsOpen(false);
-  };
+  const [selectedChatId, setSelectedChatId] = useState<string | undefined>();
+
   const selectedChat = chats?.find((c) => c.id === chatId);
   const [isChatsOpen, setChatsOpen] = useState(true);
   useEffect(() => {
@@ -35,41 +23,18 @@ export function Welcome() {
       }`;
     }
   }, [selectedChat]);
+
+  const handleChatClick = (id: string) => {
+    setSelectedChatId(id);
+    setChatsOpen(false);
+  };
   return (
-    <main className="flex flex-col h-dvh max-h-dvh text-black">
-      <div className="flex min-h-0 basis-0 grow">
-        <Conversation onGoBackClick={() => setChatsOpen(true)} />
-        <div
-          className={clsx(
-            "absolute w-full left-0 top-0 transition-transform",
-            !isChatsOpen && "translate-x-[-100%]"
-          )}
-        >
-          <div className="flex items-center gap-3 bg-white px-3 shadow-[0px_4px_12px_rgba(0,0,0,0.1)] fixed top-0 w-full h-15">
-            <span className="font-bold text-lg">Chats</span>
-            <button
-              onClick={handleNewChat}
-              className="text-[24px] cursor-pointer ml-auto"
-              disabled={isPending}
-            >
-              {isPending ? "⌛" : "📝"}
-            </button>
-          </div>
-          <div
-            className={clsx(
-              "flex flex-col bg-red-50 min-w-[200px] overflow-auto"
-            )}
-          >
-            {chats?.map((c) => (
-              <ChatItem
-                isActive={chatId == c.id}
-                chat={c}
-                onClick={() => handleChatClick(c.id)}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
+    <main className="flex flex-col h-dvh max-h-dvh text-black overflow-hidden overscroll-none">
+      <Conversation
+        chatId={selectedChatId}
+        onGoBackClick={() => setChatsOpen(true)}
+      />
+      <ChatsScreen isOpen={isChatsOpen} onChatClick={handleChatClick} />
     </main>
   );
 }
