@@ -33,17 +33,17 @@ export default defineConfig({
         display: "standalone",
         icons: [
           {
-            src: "assets/pwa-192x192.png",
+            src: "pwa-192x192.png",
             sizes: "192x192",
             type: "image/png",
           },
           {
-            src: "assets/pwa-512x512.png",
+            src: "pwa-512x512.png",
             sizes: "512x512",
             type: "image/png",
           },
           {
-            src: "assets/pwa-512x512.png",
+            src: "pwa-512x512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable",
@@ -51,13 +51,13 @@ export default defineConfig({
         ],
         screenshots: [
           {
-            src: "assets/favicon-640x320.png",
+            src: "favicon-640x320.png",
             sizes: "640x320",
             type: "image/png",
             form_factor: "wide",
           },
           {
-            src: "assets/favicon-360x640.png",
+            src: "favicon-360x640.png",
             sizes: "360x640",
             type: "image/png",
           },
