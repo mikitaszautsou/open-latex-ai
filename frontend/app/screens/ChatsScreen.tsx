@@ -7,6 +7,7 @@ import { useChats } from "~/hooks/use-chats";
 import { queryClient } from "~/query-client";
 import { chatApi } from "~/services/chat-api";
 import clsx from "clsx";
+import { FilePenLine } from "lucide-react";
 
 export type ChatsScreenProps = {
   isOpen?: boolean;
@@ -50,10 +51,10 @@ export function ChatsScreen({ isOpen, onChatClick }: ChatsScreenProps) {
         <span className="font-bold text-lg">Chats</span>
         <button
           onClick={handleNewChat}
-          className="text-[24px] cursor-pointer ml-auto"
+          className="text-[24px] cursor-pointer ml-auto h-full w-14 flex justify-center items-center"
           disabled={isPending}
         >
-          {isPending ? "⌛" : "📝"}
+          <FilePenLine />
         </button>
       </div>
       <div
