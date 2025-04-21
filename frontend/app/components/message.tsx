@@ -1,9 +1,6 @@
 import clsx from "clsx";
-import ReactMarkdown from "react-markdown";
 import { ROLE } from "~/services/chat-api";
-import remarkGfm from "remark-gfm";
-import rehypeHighlight from "rehype-highlight";
-import "highlight.js/styles/github.css";
+import { MarkdownViewer } from "react-github-markdown";
 
 export type MessageProps = {
   author: string;
@@ -12,20 +9,20 @@ export type MessageProps = {
 };
 
 export function Message({ author, message, role }: MessageProps) {
+  const isUser = role === ROLE.USER;
   return (
     <div
       className={clsx(
         "flex p-2.5 rounded-xl w-max max-w-full",
-        role === ROLE.USER ? "bg-[#0061ff] text-white self-end" : "bg-[#ffffff]"
+        isUser ? "bg-[#0061ff] text-white self-end" : "bg-[#ffffff]"
       )}
     >
       <div className="prose prose-sm dark:prose-invert w-full">
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          rehypePlugins={[rehypeHighlight]}
-        >
-          {message}
-        </ReactMarkdown>
+        {isUser ? (
+          message
+        ) : (
+          <MarkdownViewer value={message} isDarkTheme={false} />
+        )}
       </div>
     </div>
   );
