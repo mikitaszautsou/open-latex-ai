@@ -22,16 +22,17 @@ export function ChatItem({ chat, isActive, onClick }: ChatItemProps) {
   return (
     <div
       className={clsx(
-        "flex items-center gap-2 px-3 py-3 cursor-pointer bg-white",
+        "flex items-center gap-4 px-3 py-3 cursor-pointer bg-white",
         isActive && "bg-white"
       )}
+      onClick={onClick}
     >
-      <div className="flex justify-center items-center bg-[#ecf2f9] rounded-full w-12 h-12 text-[20px]">
+      <div className="flex justify-center items-center bg-[#ecf2f9] rounded-full w-16 h-16 text-[28px]">
         {chat.emoji}
       </div>
-      <div className="flex flex-col" onClick={onClick}>
-        <div className="font-bold">{chat.title}</div>
-        <div>...</div>
+      <div className="flex flex-col gap-1">
+        <div className="font-bold text-[#101010]">{chat.title}</div>
+        <div className="font-medium text-[#898999]">Test subtitle</div>
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger className="ml-auto">
