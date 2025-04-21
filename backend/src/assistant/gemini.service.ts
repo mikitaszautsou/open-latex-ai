@@ -27,7 +27,6 @@ export class GeminiService implements AssistantService, OnModuleInit {
         })
     }
     async generateTitleAndEmoji(messageContent: string): Promise<{ title: string; emoji: string; }> {
-        if (!this.model) throw new Error('Gemini Service not initialized (missing API key?)');
         try {
             const prompt = `Based on the following user message, generate a concise chat title (max 5 words) and a single relevant emoji.
 Output *only* in the format:
@@ -39,14 +38,12 @@ User Message: "${messageContent}"`;
             const result = await this.model.generateContent(prompt); // Use the potentially faster 'flash' model
             const textResponse = result.response.text();
 
-            // Simple parsing - adjust regex if needed for robustness
             const titleMatch = textResponse.match(/Title:\s*(.*)/);
             const emojiMatch = textResponse.match(/Emoji:\s*(.*)/);
 
             const title = titleMatch ? titleMatch[1].trim() : `Chat about ${messageContent.substring(0, 15)}...`; // Fallback title
             const emoji = emojiMatch ? emojiMatch[1].trim() : '💬'; // Fallback emoji
 
-            // Ensure only one emoji is returned
             const firstEmoji = emoji.match(/\p{Emoji}/u)?.[0] || '💬';
 
             return { title, emoji: firstEmoji };
