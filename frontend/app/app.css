@@ -133,3 +133,9 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

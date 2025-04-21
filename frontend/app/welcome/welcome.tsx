@@ -29,7 +29,7 @@ export function Welcome() {
     setChatsOpen(false);
   };
   return (
-    <main className="flex flex-col h-dvh max-h-dvh text-black overflow-hidden overscroll-none pb-[env(safe-area-inset-bottom,0px)] box-border">
+    <main className="flex flex-col h-dvh max-h-dvh text-black overflow-hidden overscroll-none pb-safe box-border">
       <Conversation
         chatId={selectedChatId}
         onGoBackClick={() => setChatsOpen(true)}
