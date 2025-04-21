@@ -15,7 +15,7 @@ function MessageComponent({ author, message, role, isNew }: MessageProps) {
   return (
     <div
       className={clsx(
-        "flex p-2.5 rounded-xl w-max max-w-full",
+        "flex p-2.5 rounded-xl w-max max-w-full transition-opacity",
         isUser
           ? "animate-user-message-appear bg-[#0061ff] text-white self-end"
           : "bg-[#ffffff] animate-ai-message-appear"

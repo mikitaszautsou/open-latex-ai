@@ -145,21 +145,21 @@ body {
   @keyframes userMessageAppear {
     0% {
       opacity: 0;
-      transform: translate(100px, 200px) scale(0);
+      transform: translate(50px, 60px) scale(0.8);
     }
     100% {
       opacity: 1;
-      transform: translateY(0) scale(1);
+      transform: translate(0) scale(1);
     }
   }
   @keyframes aiMessageAppear {
     0% {
       opacity: 0;
-      transform: translate(-100px, 200px) scale(0);
+      transform: translate(-50px, 60px) scale(0.8);
     }
     100% {
       opacity: 1;
-      transform: translateY(0) scale(1);
+      transform: translate(0) scale(1);
     }
   }
     
@@ -178,10 +178,10 @@ body {
     }
   }
   .animate-user-message-appear {
-    animation: userMessageAppear 0.3s ease-out forwards;
+    animation: userMessageAppear 0.4s forwards;
   }
   .animate-ai-message-appear {
-    animation: aiMessageAppear 0.3s ease-out forwards;
+    animation: aiMessageAppear 0.4s forwards;
   }
   .typing {
     animation: loadingFade 0.8s infinite;

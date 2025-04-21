@@ -78,7 +78,7 @@ export function Conversation({ onGoBackClick, chatId }: ConversationProps) {
   const prevMessagesRef = useRef(messages);
 
   useEffect(() => {
-    scrollToBottom();
+    scrollToBottom(false);
   }, [chatId, messages]);
   useEffect(() => {
     if (messages) {
@@ -120,10 +120,10 @@ export function Conversation({ onGoBackClick, chatId }: ConversationProps) {
       model: assistantConfig.model,
     });
   };
-  const scrollToBottom = () => {
+  const scrollToBottom = (smooth = true) => {
     setTimeout(() => {
       scrollContainerRef.current?.scrollTo({
-        behavior: "smooth",
+        behavior: smooth ? "smooth" : "instant",
         top: scrollContainerRef.current?.scrollHeight,
       });
     }, 100);
