@@ -13,9 +13,10 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: [
-        "assets/pwa-192x192.png",
-        "assets/pwa-512x512.png",
-        "assets/pwa-512x512.png",
+        "pwa-192x192.png",
+        "pwa-512x512.png",
+        "pwa-512x512.png",
+        "favicon-640x320.png",
       ],
       devOptions: {
         enabled: true,
@@ -46,6 +47,19 @@ export default defineConfig({
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable",
+          },
+        ],
+        screenshots: [
+          {
+            src: "assets/favicon-640x320.png",
+            sizes: "640x320",
+            type: "image/png",
+            form_factor: "wide",
+          },
+          {
+            src: "assets/favicon-360x640.png",
+            sizes: "360x640",
+            type: "image/png",
           },
         ],
       },
