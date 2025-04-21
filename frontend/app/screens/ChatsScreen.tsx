@@ -48,7 +48,7 @@ export function ChatsScreen({ isOpen, onChatClick }: ChatsScreenProps) {
       )}
     >
       <div className="flex items-center gap-3 bg-white px-3 shadow-[0px_4px_12px_rgba(0,0,0,0.1)] w-full h-15 z-10">
-        <span className="font-bold text-lg">Chats</span>
+        <span className="font-bold text-lg">Chats V1.0.0</span>
         <button
           onClick={handleNewChat}
           className="text-[24px] cursor-pointer ml-auto h-full w-14 flex justify-center items-center"
