@@ -5,7 +5,6 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
-  publicDir: "assets",
   plugins: [
     tailwindcss(),
     reactRouter(),
