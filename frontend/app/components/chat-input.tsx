@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { useState, useRef, useEffect } from "react";
 import { queryClient } from "~/query-client";
 import { chatApi, ROLE } from "~/services/chat-api";
+import { Send } from "lucide-react";
 
 export type ChatInputProps = {
   className?: string;
@@ -10,7 +11,7 @@ export type ChatInputProps = {
 };
 
 const MAX_TEXTAREA_HEIGHT = "20rem";
-const PROVIDERS = ['claude','gemini','openai'] as const;
+const PROVIDERS = ["claude", "gemini", "openai"] as const;
 
 export function ChatInput({ className, chatId }: ChatInputProps) {
   const [message, setMessage] = useState("");

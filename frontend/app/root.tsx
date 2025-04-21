@@ -17,6 +17,11 @@ import {
 } from "@tanstack/react-query-persist-client";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import { QueryClientWrapper } from "./components/query-client-wrapper";
+import { registerSW } from 'virtual:pwa-register';
+
+if ('serviceWorker' in navigator) {
+  registerSW();
+}
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
