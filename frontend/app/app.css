@@ -139,3 +139,52 @@ body {
     padding-bottom: env(safe-area-inset-bottom);
   }
 }
+
+
+@layer utilities {
+  @keyframes userMessageAppear {
+    0% {
+      opacity: 0;
+      transform: translate(100px, 200px) scale(0);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  @keyframes aiMessageAppear {
+    0% {
+      opacity: 0;
+      transform: translate(-100px, 200px) scale(0);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+    
+  @keyframes loadingFade {
+    0% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+  }
+  .animate-user-message-appear {
+    animation: userMessageAppear 0.3s ease-out forwards;
+  }
+  .animate-ai-message-appear {
+    animation: aiMessageAppear 0.3s ease-out forwards;
+  }
+  .typing {
+    animation: loadingFade 0.8s infinite;
+  }
+
+}

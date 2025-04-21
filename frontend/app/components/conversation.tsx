@@ -3,7 +3,13 @@ import { ChatInput } from "./chat-input";
 import { Message } from "./message";
 import { useMessages } from "~/hooks/use-messages";
 import { useEffect, useRef, useState } from "react";
-import { chatApi, ROLE, type AIProvider, type Chat } from "~/services/chat-api";
+import {
+  chatApi,
+  ROLE,
+  type AIProvider,
+  type Chat,
+  type Message as MessageType,
+} from "~/services/chat-api";
 import { useChats } from "~/hooks/use-chats";
 import {
   Select,
@@ -14,6 +20,8 @@ import {
 } from "./ui/select";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "~/query-client";
+import { Typing } from "./Typing";
+import clsx from "clsx";
 
 export type ConversationProps = {
   chatId?: string;
@@ -60,15 +68,35 @@ const ASSISTANTS: Assistant[] = [
 ];
 export function Conversation({ onGoBackClick, chatId }: ConversationProps) {
   const { data: chats, isLoading } = useChats();
+  const [isMessageSending, setMessageSending] = useState(false);
   const { data: messages } = useMessages(chatId);
+  const [optimisticMessages, setOptimisticMessages] = useState<MessageType[]>(
+    []
+  );
+  const [newMessageIds, setNewMessageIds] = useState(new Set());
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const prevMessagesRef = useRef(messages);
 
   useEffect(() => {
-    if (scrollContainerRef.current) {
-      const { scrollHeight } = scrollContainerRef.current;
-      scrollContainerRef.current.scrollTop = scrollHeight;
+    scrollToBottom();
+  }, [chatId, messages]);
+  useEffect(() => {
+    if (messages) {
+      const currentIds = new Set(messages.map((m) => m.id));
+      const prevIds = new Set(prevMessagesRef.current?.map((m) => m.id) || []);
+
+      const newIds = [...currentIds].filter((id) => !prevIds.has(id));
+      if (newIds.length > 0) {
+        setNewMessageIds(new Set(newIds));
+        // Clear the "new" status after animation completes
+        setTimeout(() => {
+          setNewMessageIds(new Set());
+        }, 1000);
+      }
+
+      prevMessagesRef.current = messages;
     }
-  }, [messages, chatId]);
+  }, [messages]);
   const selectedChat = chats?.find((c) => c.id === chatId);
   const updateSettings = useMutation({
     mutationFn: (patch: { provider?: AIProvider; model?: string }) =>
@@ -92,6 +120,38 @@ export function Conversation({ onGoBackClick, chatId }: ConversationProps) {
       model: assistantConfig.model,
     });
   };
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      scrollContainerRef.current?.scrollTo({
+        behavior: "smooth",
+        top: scrollContainerRef.current?.scrollHeight,
+      });
+    }, 100);
+  };
+  const handleMessageSend = (newUserMessage: string) => {
+    setMessageSending(true);
+    const newMessage = {
+      id: `temp-${Date.now()}`,
+      content: newUserMessage,
+      role: ROLE.USER,
+      pending: true,
+      chatId: "",
+    } as MessageType;
+    queryClient.setQueryData<MessageType[]>(
+      ["messages", chatId],
+      (old) => old?.concat(newMessage) ?? []
+    );
+    scrollToBottom();
+  };
+  const handleMessageReceived = (newMessage: MessageType) => {
+    setMessageSending(false);
+    queryClient.setQueryData<MessageType[]>(
+      ["messages", chatId],
+      (old) => old?.concat(newMessage) ?? []
+    );
+    scrollToBottom();
+  };
+  const displayMessages = [...(messages || []), ...optimisticMessages];
   return (
     <div className="relative flex flex-col flex-1 bg-[#eff1f5] min-w-0 grow text basis-0">
       <div className="flex items-center bg-white pr-4 shadow-[0px_4px_12px_rgba(0,0,0,0.1)] w-full h-15 basis-0 min-h-14">
@@ -132,10 +192,10 @@ export function Conversation({ onGoBackClick, chatId }: ConversationProps) {
         </span>
       </div>
       <div
-        className="flex flex-col gap-4 px-4 overflow-auto grow basis-0 py-3"
+        className="flex flex-col gap-4 px-4 overflow-auto grow basis-0 py-3 pb-30"
         ref={scrollContainerRef}
       >
-        {messages?.map((m) => (
+        {displayMessages?.map((m) => (
           <Message
             author={m.role === ROLE.USER ? "User" : "AI"}
             role={m.role}
@@ -143,9 +203,19 @@ export function Conversation({ onGoBackClick, chatId }: ConversationProps) {
           />
         ))}
       </div>
+      <div className="h-0">
+        <Typing
+          className={clsx(
+            "absolute transition-opacity top-[-50px] left-4",
+            isMessageSending ? "opacity-100" : "opacity-0"
+          )}
+        />
+      </div>
       <ChatInput
         className="right-0 bottom-0 left-0 p-2 basis-0"
         chatId={chatId}
+        onSendMessage={handleMessageSend}
+        onMessageSent={handleMessageReceived}
       />
     </div>
   );

@@ -2,49 +2,57 @@ import { useMutation } from "@tanstack/react-query";
 import clsx from "clsx";
 import { useState, useRef, useEffect } from "react";
 import { queryClient } from "~/query-client";
-import { chatApi, ROLE } from "~/services/chat-api";
+import { chatApi, ROLE, type Message } from "~/services/chat-api";
 import { Send } from "lucide-react";
 
 export type ChatInputProps = {
   className?: string;
   chatId?: string;
+  onSendMessage?: (message: string) => void;
+  onMessageSent?: (response: Message) => void;
 };
 
 const MAX_TEXTAREA_HEIGHT = "20rem";
-const PROVIDERS = ["claude", "gemini", "openai"] as const;
 
-export function ChatInput({ className, chatId }: ChatInputProps) {
+export function ChatInput({
+  className,
+  chatId,
+  onMessageSent,
+  onSendMessage,
+}: ChatInputProps) {
   const [message, setMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { mutate: sendMessageMutation, isPending: isSendingMessage } =
     useMutation({
-      mutationFn: () =>
-        chatApi.createMessage(chatId!, {
+      mutationFn: async (message: string) => {
+        const newMessage = await chatApi.createMessage(chatId!, {
           content: message.trim(),
           role: ROLE.USER,
-        }),
-      onSuccess: () => {
-        setMessage("");
-        queryClient.invalidateQueries({ queryKey: ["messages", chatId] });
-        if (textareaRef.current) {
-          textareaRef.current.style.height = "auto";
+        });
+        const newMessages = await chatApi.getMessages(chatId!);
+        const newResponse = newMessages.at(-1);
+        if (newResponse) {
+          onMessageSent?.(newResponse);
         }
       },
+      onSuccess: () => {},
     });
 
   const handleSend = () => {
     if (isSendingMessage || !message.trim()) return;
-    sendMessageMutation();
+    onSendMessage?.(message.trim());
+    sendMessageMutation(message);
+    setMessage("");
   };
 
-  useEffect(() => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.height = "auto";
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    }
-  }, [message]);
+  // useEffect(() => {
+  //   const textarea = textareaRef.current;
+  //   if (textarea) {
+  //     textarea.style.height = "auto";
+  //     textarea.style.height = `${textarea.scrollHeight}px`;
+  //   }
+  // }, [message]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
