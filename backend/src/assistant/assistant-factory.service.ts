@@ -1,26 +1,27 @@
-import { Injectable } from "@nestjs/common";
-import { AssistantService } from "./assistant-service.interface";
-import { ClaudeService } from "./claude.service";
-import { GeminiService } from "./gemini.service";
-
-type AIProvider = 'claude' | 'gemini';
+import { Injectable } from '@nestjs/common';
+import { AssistantService } from './assistant-service.interface';
+import { ClaudeService } from './claude.service';
+import { GeminiService } from './gemini.service';
+import { OpenAIService } from './openai.service';
+import { AIProvider } from './ai-provider.type';
 
 @Injectable()
 export class AssistantFactoryService {
+  constructor(
+    private claude: ClaudeService,
+    private gemini: GeminiService,
+    private openai: OpenAIService,
+  ) {}
 
-    private readonly assistantProvider: AssistantService;
-    constructor(
-        private readonly claudeService: ClaudeService,
-        private readonly geminiService: GeminiService
-    ) {
+  getService(provider: AIProvider = 'gemini'): AssistantService {
+    switch (provider) {
+      case 'openai':
+        return this.openai;
+      case 'gemini':
+        return this.gemini;
+      case 'claude':
+      default:
+        return this.claude;
     }
-    getService(provider: AIProvider = 'gemini'): AssistantService {
-        switch (provider) {
-            case 'gemini':
-                return this.geminiService;
-            case 'claude':
-            default:
-                return this.claudeService;
-        }
-    }
+  }
 }

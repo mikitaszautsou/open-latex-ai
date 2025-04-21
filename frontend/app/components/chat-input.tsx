@@ -9,7 +9,8 @@ export type ChatInputProps = {
   chatId?: string;
 };
 
-const MAX_TEXTAREA_HEIGHT = "20rem"; // Approx 10 rows, adjust based on your styling
+const MAX_TEXTAREA_HEIGHT = "20rem";
+const PROVIDERS = ['claude','gemini','openai'] as const;
 
 export function ChatInput({ className, chatId }: ChatInputProps) {
   const [message, setMessage] = useState("");

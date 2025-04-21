@@ -17,9 +17,11 @@ model Chat {
   id        String    @id @default(uuid())
   title     String
   emoji     String?
+  provider  String    @default("gemini")
+  model     String    @default("gpt-3.5-turbo")
   messages  Message[]
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 

@@ -20,14 +20,14 @@ export class ClaudeService implements AssistantService {
         throw new Error("Method not implemented.");
     }
 
-    async generateResponse(messages: Message[]): Promise<string> {
+    async generateResponse(messages: Message[], model?: string): Promise<string> {
         const anthropicMessages = messages.map(msg => ({
             role: msg.role === Role.USER ? 'user' : 'assistant',
             content: msg.content
         }) as MessageParam);
 
         const response = await this.client.messages.create({
-            model: this.model,
+            model: model ?? this.model,
             max_tokens: 20000,
             temperature: 0,
             messages: anthropicMessages,

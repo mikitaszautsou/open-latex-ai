@@ -3,15 +3,12 @@ import { Role } from 'generated/prisma';
 import { AIProvider } from 'src/assistant/ai-provider.type';
 
 export class CreateMessageDto {
-    @IsNotEmpty()
-    @IsString()
-    content: string;
+  @IsNotEmpty()
+  @IsString()
+  content: string;
 
-    @IsNotEmpty()
-    @IsEnum(Role, { message: 'Role must be either "USER" or "ASSISTANT"' })
-    role: Role;
+  @IsNotEmpty()
+  @IsEnum(Role, { message: 'Role must be either "USER" or "ASSISTANT"' })
+  role: Role;
 
-    @IsOptional()
-    @IsEnum(['claude', 'gemini'], { message: 'Provider must be either "claude" or "gemini"'})
-    provider?: AIProvider;
 }

@@ -6,6 +6,6 @@ export interface Message {
 }
 
 export interface AssistantService {
-    generateResponse(messages: Message[]): Promise<string>;
-    generateTitleAndEmoji(messageContent: string): Promise<{ title: string; emoji: string }>;
+    generateResponse(messages: Message[], model?: string): Promise<string>;
+    generateTitleAndEmoji(messageContent: string, model?: string): Promise<{ title: string; emoji: string }>;
 }

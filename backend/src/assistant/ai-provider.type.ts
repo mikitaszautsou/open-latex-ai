@@ -1,1 +1,1 @@
-export type AIProvider = 'claude' | 'gemini';
+export type AIProvider = 'claude' | 'gemini' | 'openai';
