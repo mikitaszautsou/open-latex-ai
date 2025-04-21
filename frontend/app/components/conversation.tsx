@@ -34,16 +34,28 @@ const ASSISTANTS: Assistant[] = [
     model: "claude-3-7-sonnet-latest",
   },
   {
-    id: "gemini",
-    title: "Gemini",
+    id: "gemini-2.5-pro",
+    title: "Gemini 2.5-pro",
     provider: "gemini",
     model: "gemini-2.5-pro-preview-03-25",
+  },
+  {
+    id: "gemini-2.5-flash",
+    title: "Gemini 2.5-flash",
+    provider: "gemini",
+    model: "gemini-2.5-flash-preview-04-17",
   },
   {
     id: "o4-mini",
     title: "o4-mini",
     provider: "openai",
     model: "o4-mini",
+  },
+  {
+    id: "gpt-4.5",
+    title: "gpt-4.5",
+    provider: "openai",
+    model: "gpt-4.5-preview",
   },
 ];
 export function Conversation({ onGoBackClick, chatId }: ConversationProps) {
@@ -96,13 +108,13 @@ export function Conversation({ onGoBackClick, chatId }: ConversationProps) {
           </svg>
         </button>
         <span className="text-2xl pr-2">{selectedChat?.emoji}</span>{" "}
-        <span className="text-lg font-bold">{selectedChat?.title}</span>
+        <span className="text-sm font-bold">{selectedChat?.title}</span>
         <span className="ml-auto">
           <Select
             value={selectedAssistant?.id}
             onValueChange={handleAssistantChange}
           >
-            <SelectTrigger className="w-32">
+            <SelectTrigger className="w-42">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

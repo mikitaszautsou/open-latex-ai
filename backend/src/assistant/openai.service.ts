@@ -15,13 +15,28 @@ export class OpenAIService implements AssistantService {
       role: m.role === Role.USER ? 'user' : 'assistant',
       content: m.content,
     })) as ChatCompletionMessageParam[];
-    const res = await this.client.chat.completions.create({
-      model: used,
-      messages: chat,
-      response_format: { type: 'text' },
-      reasoning_effort: 'high',
-      store: false,
-    });
+    let res: OpenAI.Chat.Completions.ChatCompletion;
+    if (model === 'gpt-4.5-preview') {
+      res = await this.client.chat.completions.create({
+        model: used,
+        messages: chat,
+        response_format: { type: 'text' },
+        store: false,
+        temperature: 1,
+        max_completion_tokens: 10000,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+      });
+    } else {
+      res = await this.client.chat.completions.create({
+        model: used,
+        messages: chat,
+        response_format: { type: 'text' },
+        reasoning_effort: 'high',
+        store: false,
+      });
+    }
     const txt = res.choices?.[0]?.message?.content;
     if (typeof txt === 'string') return txt;
     throw new Error('OpenAI: unexpected response format');
