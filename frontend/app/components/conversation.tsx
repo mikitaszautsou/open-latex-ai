@@ -65,6 +65,12 @@ const ASSISTANTS: Assistant[] = [
     provider: "openai",
     model: "gpt-4.5-preview",
   },
+  {
+    id: "o3",
+    title: "o3",
+    provider: "openai",
+    model: "o3",
+  },
 ];
 export function Conversation({ onGoBackClick, chatId }: ConversationProps) {
   const { data: chats, isLoading } = useChats();

@@ -46,13 +46,13 @@ export function ChatInput({
     setMessage("");
   };
 
-  // useEffect(() => {
-  //   const textarea = textareaRef.current;
-  //   if (textarea) {
-  //     textarea.style.height = "auto";
-  //     textarea.style.height = `${textarea.scrollHeight}px`;
-  //   }
-  // }, [message]);
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }, [message]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {

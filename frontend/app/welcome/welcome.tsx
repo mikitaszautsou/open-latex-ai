@@ -12,10 +12,13 @@ import { ChatsScreen } from "~/screens/ChatsScreen";
 export function Welcome() {
   const { data: chats, isLoading } = useChats();
   const { chatId } = useParams();
-  const [selectedChatId, setSelectedChatId] = useState<string | undefined>();
+  const [selectedChatId, setSelectedChatId] = useState<string | undefined>(
+    chatId
+  );
 
   const selectedChat = chats?.find((c) => c.id === chatId);
-  const [isChatsOpen, setChatsOpen] = useState(true);
+  console.log({ chatId });
+  const [isChatsOpen, setChatsOpen] = useState(!chatId);
   useEffect(() => {
     if (selectedChat) {
       document.title = `${selectedChat.emoji ?? ""} ${
@@ -27,6 +30,7 @@ export function Welcome() {
   const handleChatClick = (id: string) => {
     setSelectedChatId(id);
     setChatsOpen(false);
+    window.history.pushState({ chatId: id }, "", `/chat/${id}`);
   };
   return (
     <main className="flex flex-col h-dvh max-h-dvh text-black overflow-hidden overscroll-none pb-safe box-border">

@@ -27,7 +27,7 @@ export function ChatItem({ chat, isActive, onClick }: ChatItemProps) {
       )}
       onClick={onClick}
     >
-      <div className="flex justify-center items-center bg-[#ecf2f9] rounded-full w-16 h-16 text-[28px]">
+      <div className="flex justify-center items-center bg-[#ecf2f9] rounded-full w-14 h-14 text-[28px]">
         {chat.emoji}
       </div>
       <div className="flex flex-col gap-1">
