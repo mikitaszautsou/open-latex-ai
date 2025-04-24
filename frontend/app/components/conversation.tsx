@@ -48,6 +48,18 @@ const ASSISTANTS: Assistant[] = [
     model: "gemini-2.5-pro-preview-03-25",
   },
   {
+    id: "gemini-2.5-concise",
+    title: "Gemini 2.5(concise)",
+    provider: "gemini",
+    model: "gemini-2.5-concise",
+  },
+  {
+    id: "gemini-2.5-google-search",
+    title: "Gemini 2.5(Google Search)",
+    provider: "gemini",
+    model: "gemini-2.5-google-search",
+  },
+  {
     id: "gemini-2.5-flash",
     title: "Gemini 2.5-flash",
     provider: "gemini",

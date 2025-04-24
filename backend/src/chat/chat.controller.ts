@@ -8,6 +8,8 @@ import {
   UseGuards,
   Request,
   Patch,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common'; // Import UseGuards, Request
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
@@ -59,5 +61,23 @@ export class ChatController {
     @Request() req: { user: Omit<User, 'password'> },
   ): Promise<Chat> {
     return this.chatService.updateSettings(id, dto, req.user.id);
+  }
+
+  @Patch(':id/pin')
+  @HttpCode(HttpStatus.OK)
+  async pinChat(
+    @Param('id') id: string,
+    @Request() req: { user: Omit<User, 'password'> },
+  ): Promise<Chat> {
+    return this.chatService.pinChat(id, req.user.id);
+  }
+
+  @Patch(':id/unpin')
+  @HttpCode(HttpStatus.OK)
+  async unpinChat(
+    @Param('id') id: string,
+    @Request() req: { user: Omit<User, 'password'> },
+  ): Promise<Chat> {
+    return this.chatService.unpinChat(id, req.user.id);
   }
 }

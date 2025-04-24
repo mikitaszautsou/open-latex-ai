@@ -1,8 +1,8 @@
 import clsx from "clsx";
 import { useNavigate } from "react-router";
-import type { Chat } from "~/services/chat-api";
+import { chatApi, type Chat } from "~/services/chat-api";
 import { Button } from "./ui/button";
-import { EllipsisVertical } from "lucide-react";
+import { EllipsisVertical, Pin, PinOff } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +11,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "~/query-client";
 
 export type ChatItemProps = {
   isActive?: boolean;
@@ -19,6 +21,28 @@ export type ChatItemProps = {
 };
 
 export function ChatItem({ chat, isActive, onClick }: ChatItemProps) {
+  const { mutate: pinMutation } = useMutation({
+    mutationFn: () => chatApi.pinChat(chat.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["chats"] });
+    },
+  });
+
+  const { mutate: unpinMutation } = useMutation({
+    mutationFn: () => chatApi.unpinChat(chat.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["chats"] });
+    },
+  });
+
+  const handlePinToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (chat.pinned) {
+      unpinMutation();
+    } else {
+      pinMutation();
+    }
+  };
   return (
     <div
       className={clsx(
@@ -31,7 +55,10 @@ export function ChatItem({ chat, isActive, onClick }: ChatItemProps) {
         {chat.emoji}
       </div>
       <div className="flex flex-col gap-1">
-        <div className="font-bold text-[#101010]">{chat.title}</div>
+        <div className="font-bold text-[#101010]">
+          {chat.title}
+          {chat.pinned && <Pin className="inline-block pl-2 min-w-6 max-w-6" />}
+        </div>
         <div className="font-medium text-[#898999]">Test subtitle</div>
       </div>
       <DropdownMenu>
@@ -39,7 +66,14 @@ export function ChatItem({ chat, isActive, onClick }: ChatItemProps) {
           <EllipsisVertical />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem>Pin</DropdownMenuItem>
+          <DropdownMenuItem onClick={handlePinToggle}>
+            {chat.pinned ? (
+              <PinOff className="mr-2 h-4 w-4" />
+            ) : (
+              <Pin className="mr-2 h-4 w-4" />
+            )}
+            {chat.pinned ? "Unpin" : "Pin"}
+          </DropdownMenuItem>
           <DropdownMenuItem>Remove</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

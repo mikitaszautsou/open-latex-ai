@@ -45,9 +45,12 @@ export class ChatService {
   async findAll(userId: string): Promise<Chat[]> {
     return this.prisma.chat.findMany({
       where: { userId },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: [
+        { pinned: 'desc' },
+        {
+          createdAt: 'desc',
+        },
+      ],
     });
   }
 
@@ -130,5 +133,19 @@ export class ChatService {
     });
   }
 
-  //
+  async pinChat(chatId: string, userId: string): Promise<Chat> {
+    await this.ensureChatExists(chatId, userId);
+    return this.prisma.chat.update({
+      where: { id: chatId },
+      data: { pinned: true },
+    });
+  }
+
+  async unpinChat(chatId: string, userId: string): Promise<Chat> {
+    await this.ensureChatExists(chatId, userId);
+    return this.prisma.chat.update({
+      where: { id: chatId },
+      data: { pinned: false },
+    });
+  }
 }
