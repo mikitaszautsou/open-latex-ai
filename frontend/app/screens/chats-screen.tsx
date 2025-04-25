@@ -11,10 +11,15 @@ import { FilePenLine } from "lucide-react";
 
 export type ChatsScreenProps = {
   isOpen?: boolean;
+  selectedChatId?: string;
   onChatClick?: (id: string) => void;
 };
 
-export function ChatsScreen({ isOpen, onChatClick }: ChatsScreenProps) {
+export function ChatsScreen({
+  isOpen,
+  selectedChatId,
+  onChatClick,
+}: ChatsScreenProps) {
   const { data: chats } = useChats();
   const navigate = useNavigate();
   const { mutate: createChatMutation, isPending } = useMutation({
@@ -43,14 +48,14 @@ export function ChatsScreen({ isOpen, onChatClick }: ChatsScreenProps) {
   return (
     <div
       className={clsx(
-        "absolute w-full left-0 top-0 transition-transform duration-300 flex flex-col h-dvh overscroll-none",
+        "absolute w-full left-0 top-0 transition-transform duration-300 flex flex-col h-dvh overscroll-none lg:w-[400px]",
         !isOpen && "translate-x-[-100%]"
       )}
     >
       <div className="flex items-center gap-3 bg-white px-3 shadow-[0px_4px_12px_rgba(0,0,0,0.1)] w-full h-15 z-10">
-        <span className="font-bold text-lg">Chats</span>
-        <span className="font-bold text-xl flex grow justify-center">
-          V1.2.0
+        <span className="font-bold text-lg lg:hidden">Chats</span>
+        <span className="font-bold text-xl flex grow justify-center lg:justify-start">
+          V1.4.0
         </span>
         <button
           onClick={handleNewChat}
@@ -62,11 +67,15 @@ export function ChatsScreen({ isOpen, onChatClick }: ChatsScreenProps) {
       </div>
       <div
         className={clsx(
-          "flex flex-col bg-white min-w-[200px] overflow-auto grow basis-0"
+          "flex flex-col bg-white min-w-[300px] overflow-auto grow basis-0"
         )}
       >
         {visibleChats?.map((c) => (
-          <ChatItem chat={c} onClick={() => onChatClick?.(c.id)} />
+          <ChatItem
+            chat={c}
+            onClick={() => onChatClick?.(c.id)}
+            isActive={c.id === selectedChatId}
+          />
         ))}
       </div>
     </div>

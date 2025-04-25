@@ -22,9 +22,11 @@ import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "~/query-client";
 import { Typing } from "./Typing";
 import clsx from "clsx";
+import { cn } from "~/lib/utils";
 
 export type ConversationProps = {
   chatId?: string;
+  isChatsOpen?: boolean;
   onGoBackClick: () => void;
 };
 
@@ -84,7 +86,11 @@ const ASSISTANTS: Assistant[] = [
     model: "o3",
   },
 ];
-export function Conversation({ onGoBackClick, chatId }: ConversationProps) {
+export function Conversation({
+  onGoBackClick,
+  chatId,
+  isChatsOpen,
+}: ConversationProps) {
   const { data: chats, isLoading } = useChats();
   const [isMessageSending, setMessageSending] = useState(false);
   const { data: messages } = useMessages(chatId);
@@ -171,10 +177,15 @@ export function Conversation({ onGoBackClick, chatId }: ConversationProps) {
   };
   const displayMessages = [...(messages || []), ...optimisticMessages];
   return (
-    <div className="relative flex flex-col flex-1 bg-[#eff1f5] min-w-0 grow text basis-0">
+    <div
+      className={cn(
+        "relative flex flex-col flex-1 bg-[#eff1f5] min-w-0 grow text basis-0 transition-[padding]",
+        isChatsOpen && "lg:pl-[400px]"
+      )}
+    >
       <div className="flex items-center bg-white pr-4 shadow-[0px_4px_12px_rgba(0,0,0,0.1)] w-full h-15 basis-0 min-h-14">
         <button
-          className="text-[30px] flex justify-cente h-full w-11 justify-center items-center cursor-pointer"
+          className="text-[30px] flex justify-cente h-full w-11 justify-center items-center cursor-pointer lg:hidden"
           onClick={onGoBackClick}
         >
           <svg
@@ -185,7 +196,7 @@ export function Conversation({ onGoBackClick, chatId }: ConversationProps) {
             <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192" />
           </svg>
         </button>
-        <span className="text-2xl pr-2" onClick={onGoBackClick}>
+        <span className="text-2xl pr-2  lg:pl-3" onClick={onGoBackClick}>
           {selectedChat?.emoji}
         </span>{" "}
         <span className="text-sm font-bold" onClick={onGoBackClick}>

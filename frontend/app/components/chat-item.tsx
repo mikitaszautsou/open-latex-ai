@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { chatApi, type Chat } from "~/services/chat-api";
 import { Button } from "./ui/button";
 import { EllipsisVertical, Pin, PinOff } from "lucide-react";
@@ -13,6 +13,7 @@ import {
 } from "./ui/dropdown-menu";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "~/query-client";
+import { cn } from "~/lib/utils";
 
 export type ChatItemProps = {
   isActive?: boolean;
@@ -45,17 +46,22 @@ export function ChatItem({ chat, isActive, onClick }: ChatItemProps) {
   };
   return (
     <div
-      className={clsx(
-        "flex items-center gap-4 px-3 py-3 cursor-pointer bg-white",
-        isActive && "bg-white"
+      className={cn(
+        "flex items-center gap-4 px-3 py-3 cursor-pointer bg-white transition-[background] hover:bg-[#edf7ff]",
+        isActive && "bg-[#edf7ff]"
       )}
       onClick={onClick}
     >
-      <div className="flex justify-center items-center bg-[#ecf2f9] rounded-full w-14 h-14 text-[28px]">
+      <div
+        className={cn(
+          "flex justify-center items-center bg-[#ecf2f9] rounded-full w-12 h-12 text-[24px] transition-[background]",
+          isActive && "bg-[#cde0fa]"
+        )}
+      >
         {chat.emoji}
       </div>
-      <div className="flex flex-col gap-1">
-        <div className="font-bold text-[#101010]">
+      <div className="flex flex-col min-w-0 flex-1">
+        <div className="font-bold text-[#101010] overflow-hidden whitespace-nowrap text-ellipsis">
           {chat.title}
           {chat.pinned && <Pin className="inline-block pl-2 min-w-6 max-w-6" />}
         </div>

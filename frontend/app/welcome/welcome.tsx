@@ -7,7 +7,8 @@ import { useChats } from "~/hooks/use-chats";
 import { queryClient } from "~/query-client";
 import { chatApi } from "~/services/chat-api";
 import clsx from "clsx";
-import { ChatsScreen } from "~/screens/ChatsScreen";
+import { ChatsScreen } from "~/screens/chats-screen";
+import { useBreakpoints } from "~/hooks/use-media-query";
 
 export function Welcome() {
   const { data: chats, isLoading } = useChats();
@@ -27,9 +28,19 @@ export function Welcome() {
     }
   }, [selectedChat]);
 
+  const { isDesktop, isMobile } = useBreakpoints();
+  useEffect(() => {
+    if (isDesktop) {
+      setChatsOpen(true);
+    } else {
+      setChatsOpen(false);
+    }
+  }, [isDesktop, isMobile]);
   const handleChatClick = (id: string) => {
     setSelectedChatId(id);
-    setChatsOpen(false);
+    if (!isDesktop) {
+      setChatsOpen(false);
+    }
     window.history.pushState({ chatId: id }, "", `/chat/${id}`);
   };
   return (
@@ -37,8 +48,13 @@ export function Welcome() {
       <Conversation
         chatId={selectedChatId}
         onGoBackClick={() => setChatsOpen(true)}
+        isChatsOpen={isChatsOpen}
       />
-      <ChatsScreen isOpen={isChatsOpen} onChatClick={handleChatClick} />
+      <ChatsScreen
+        selectedChatId={selectedChatId}
+        isOpen={isChatsOpen}
+        onChatClick={handleChatClick}
+      />
     </main>
   );
 }
