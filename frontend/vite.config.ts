@@ -12,9 +12,9 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: [
-        "pwa-192x192.png",
-        "pwa-512x512.png",
-        "pwa-512x512.png",
+        "favicon-192x192.png",
+        "favicon-512x512.png",
+        "favicon-512x512.png",
         "favicon-640x320.png",
       ],
       devOptions: {
@@ -32,17 +32,17 @@ export default defineConfig({
         display: "standalone",
         icons: [
           {
-            src: "pwa-192x192.png",
+            src: "favicon-192x192.png",
             sizes: "192x192",
             type: "image/png",
           },
           {
-            src: "pwa-512x512.png",
+            src: "favicon-512x512.png",
             sizes: "512x512",
             type: "image/png",
           },
           {
-            src: "pwa-512x512.png",
+            src: "favicon-512x512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable",
