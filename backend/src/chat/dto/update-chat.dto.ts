@@ -3,7 +3,7 @@ import { AIProvider } from 'src/assistant/ai-provider.type';
 
 export class UpdateChatDto {
   @IsOptional()
-  @IsEnum(['claude','gemini','openai'] as const)
+  @IsEnum(['claude', 'gemini', 'openai', 'deepseek'] as const)
   provider?: AIProvider;
 
   @IsOptional()

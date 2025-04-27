@@ -85,7 +85,14 @@ const ASSISTANTS: Assistant[] = [
     provider: "openai",
     model: "o3",
   },
+  {
+    id: "deepseek",
+    title: "DeepSeek Chat",
+    provider: "deepseek",
+    model: "deepseek",
+  },
 ];
+
 export function Conversation({
   onGoBackClick,
   chatId,

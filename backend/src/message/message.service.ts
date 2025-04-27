@@ -15,7 +15,7 @@ export class MessageService {
     private readonly prisma: PrismaService,
     private readonly chatService: ChatService,
     private readonly assistantFactoryService: AssistantFactoryService,
-  ) {}
+  ) { }
 
   async findAllByChatId(chatId: string, userId: string): Promise<Message[]> {
     await this.chatService.ensureChatExists(chatId, userId);
@@ -56,21 +56,21 @@ export class MessageService {
     });
 
     if (isUserMessage && messageCount === 0) {
-        await this.chatService
-          .generateAndSetTitleAndEmoji(
-            chatId,
-            newMessage.content,
-            userId,
-            provider,
-            model
-          )
-          .catch(err => this.logger.error(err));
-      }
+      await this.chatService
+        .generateAndSetTitleAndEmoji(
+          chatId,
+          newMessage.content,
+          userId,
+          provider,
+          model
+        )
+        .catch(err => this.logger.error(err));
+    }
 
     if (isUserMessage) {
-        await this.generateAIResponse(chatId, userId, provider, model)
-          .catch(err => this.logger.error(err));
-      }
+      await this.generateAIResponse(chatId, userId, provider, model)
+        .catch(err => this.logger.error(err));
+    }
 
     return newMessage;
   }
