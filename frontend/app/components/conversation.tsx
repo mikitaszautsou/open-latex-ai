@@ -91,6 +91,12 @@ const ASSISTANTS: Assistant[] = [
     provider: "deepseek",
     model: "deepseek",
   },
+  {
+    id: "cerebras",
+    title: "LLama-3.3(Cerebras)",
+    provider: "cerebras",
+    model: "llama-3.3",
+  },
 ];
 
 export function Conversation({
@@ -108,9 +114,6 @@ export function Conversation({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const prevMessagesRef = useRef(messages);
 
-  useEffect(() => {
-    scrollToBottom(false);
-  }, [chatId, messages]);
   useEffect(() => {
     if (messages) {
       const currentIds = new Set(messages.map((m) => m.id));
@@ -172,7 +175,6 @@ export function Conversation({
       ["messages", chatId],
       (old) => old?.concat(newMessage) ?? []
     );
-    scrollToBottom();
   };
   const handleMessageReceived = (newMessage: MessageType) => {
     setMessageSending(false);
@@ -180,7 +182,6 @@ export function Conversation({
       ["messages", chatId],
       (old) => old?.concat(newMessage) ?? []
     );
-    scrollToBottom();
   };
   const displayMessages = [...(messages || []), ...optimisticMessages];
   return (

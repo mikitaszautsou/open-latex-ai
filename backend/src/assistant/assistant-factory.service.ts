@@ -5,6 +5,7 @@ import { GeminiService } from './gemini.service';
 import { OpenAIService } from './openai.service';
 import { AIProvider } from './ai-provider.type';
 import { DeepSeekAIService } from './deepseek.service';
+import { CerebrasService } from './cerebras-ai.service';
 
 @Injectable()
 export class AssistantFactoryService {
@@ -13,6 +14,7 @@ export class AssistantFactoryService {
     private gemini: GeminiService,
     private openai: OpenAIService,
     private deepseek: DeepSeekAIService,
+    private cerebras: CerebrasService,
   ) { }
 
   getService(provider: AIProvider = 'gemini'): AssistantService {
@@ -24,6 +26,8 @@ export class AssistantFactoryService {
         return this.gemini;
       case 'deepseek':
         return this.deepseek;
+      case 'cerebras':
+          return this.cerebras;
       case 'claude':
       default:
         return this.claude;

@@ -55,7 +55,7 @@ export function ChatsScreen({
       <div className="flex items-center gap-3 bg-white px-3 shadow-[0px_4px_12px_rgba(0,0,0,0.1)] w-full h-15 z-10">
         <span className="font-bold text-lg lg:hidden">Chats</span>
         <span className="font-bold text-xl flex grow justify-center lg:justify-start">
-          V1.4.1
+          V1.4.2
         </span>
         <button
           onClick={handleNewChat}
