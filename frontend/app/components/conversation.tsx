@@ -191,7 +191,7 @@ export function Conversation({
         isChatsOpen && "lg:pl-[400px]"
       )}
     >
-      <div className="flex items-center bg-white pr-4 shadow-[0px_4px_12px_rgba(0,0,0,0.1)] w-full h-15 basis-0 min-h-14">
+      <div className="flex items-center bg-white pr-4 shadow-[0px_4px_12px_rgba(0,0,0,0.1)] w-full h-15 basis-0 min-h-14 z-10">
         <button
           className="text-[30px] flex justify-cente h-full w-11 justify-center items-center cursor-pointer lg:hidden"
           onClick={onGoBackClick}
@@ -243,13 +243,13 @@ export function Conversation({
       <div className="h-0">
         <Typing
           className={clsx(
-            "absolute transition-opacity top-[-50px] left-4",
+            "absolute transition-opacity top-[-50px] left-4 z-20",
             isMessageSending ? "opacity-100" : "opacity-0"
           )}
         />
       </div>
       <ChatInput
-        className="right-0 bottom-0 left-0 p-2 basis-0"
+        className="right-0 bottom-0 left-0 p-2 basis-0 z-10"
         chatId={chatId}
         onSendMessage={handleMessageSend}
         onMessageSent={handleMessageReceived}
