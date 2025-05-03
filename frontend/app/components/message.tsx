@@ -25,7 +25,6 @@ function preprocessLatex(markdown: string) {
 
 function MessageComponent({ author, message, role, isNew }: MessageProps) {
   const isUser = role === ROLE.USER;
-  console.log("mesthe ge", preprocessLatex(message));
   return (
     <div
       className={clsx(
