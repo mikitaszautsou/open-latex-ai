@@ -1,1 +1,1 @@
-export type AIProvider = 'claude' | 'gemini' | 'openai' | 'deepseek';
+export type AIProvider = 'claude' | 'gemini' | 'openai' | 'deepseek' | 'cerebras';

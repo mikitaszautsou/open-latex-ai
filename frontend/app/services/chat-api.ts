@@ -1,6 +1,6 @@
 import { api } from "./api";
 
-export type AIProvider = "claude" | "gemini" | "openai" | "deepseek";
+export type AIProvider = "claude" | "gemini" | "openai" | "deepseek" | "cerebras";
 
 export interface CreateChatDto {
   title?: string;

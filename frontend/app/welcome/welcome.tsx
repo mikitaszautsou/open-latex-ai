@@ -18,7 +18,6 @@ export function Welcome() {
   );
 
   const selectedChat = chats?.find((c) => c.id === chatId);
-  console.log({ chatId });
   const [isChatsOpen, setChatsOpen] = useState(!chatId);
   useEffect(() => {
     if (selectedChat) {
@@ -33,7 +32,7 @@ export function Welcome() {
     if (isDesktop) {
       setChatsOpen(true);
     } else {
-      setChatsOpen(false);
+      setChatsOpen(!chatId);
     }
   }, [isDesktop, isMobile]);
   const handleChatClick = (id: string) => {

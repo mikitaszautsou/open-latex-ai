@@ -7,7 +7,7 @@ export class CreateChatDto {
   title?: string
 
   @IsOptional()
-  @IsEnum(['claude', 'gemini', 'openai', 'deepseek'] as const)
+  @IsEnum(['claude', 'gemini', 'openai', 'deepseek', 'cerebras'] as const)
   provider?: AIProvider
 
   @IsOptional()

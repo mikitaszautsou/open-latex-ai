@@ -20,7 +20,7 @@ export type MessageProps = {
 };
 
 function preprocessLatex(markdown: string) {
-  return markdown.replace(/\`/g, "$");
+  return markdown;
 }
 
 function MessageComponent({ author, message, role, isNew }: MessageProps) {

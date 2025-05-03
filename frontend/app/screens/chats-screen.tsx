@@ -13,6 +13,7 @@ export type ChatsScreenProps = {
   isOpen?: boolean;
   selectedChatId?: string;
   onChatClick?: (id: string) => void;
+  setSelectedChatId?: (id: string) => void;
 };
 
 export function ChatsScreen({
@@ -21,12 +22,15 @@ export function ChatsScreen({
   onChatClick,
 }: ChatsScreenProps) {
   const { data: chats } = useChats();
-  const navigate = useNavigate();
   const { mutate: createChatMutation, isPending } = useMutation({
-    mutationFn: () => chatApi.createChat(),
+    mutationFn: () =>
+      chatApi.createChat({
+        provider: "gemini",
+        model: "gemini-2.5-pro-preview-03-25",
+      }),
     onSuccess: (newChat) => {
       queryClient.invalidateQueries({ queryKey: ["chats"] });
-      navigate(`/chat/${newChat.id}`);
+      onChatClick?.(newChat.id);
     },
   });
 
@@ -34,16 +38,6 @@ export function ChatsScreen({
     createChatMutation();
   };
 
-  const [showChatsPreview, setShowChatsPreview] = useState(false);
-  useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => {
-        setShowChatsPreview(false);
-      }, 300);
-    } else {
-      setShowChatsPreview(true);
-    }
-  }, [isOpen]);
   const visibleChats = chats;
   return (
     <div

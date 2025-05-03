@@ -67,21 +67,18 @@ export function ChatInput({
     <div
       className={clsx(
         "flex items-start gap-2 bg-[#ffffff] p-3 shadow-[0px_4px_12px_rgba(0,0,0,0.1)]",
-        isSendingMessage && "cursor-not-allowed",
         className
       )}
     >
       <textarea
         ref={textareaRef}
         className={clsx(
-          "flex-1 px-3 py-2 border border-transparent rounded-2xl outline-none bg-[#fafafa] resize-none shadow-[0_0_0_1px_rgba(0,0,0,0.1)] overflow-y-auto",
-          isSendingMessage && "cursor-not-allowed"
+          "flex-1 px-3 py-2 border border-transparent rounded-2xl outline-none bg-[#fafafa] resize-none shadow-[0_0_0_1px_rgba(0,0,0,0.1)] overflow-y-auto"
         )}
         placeholder="Type your message..."
         rows={1}
         style={{ maxHeight: MAX_TEXTAREA_HEIGHT }}
         value={message}
-        disabled={isSendingMessage}
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleKeyDown}
       />
