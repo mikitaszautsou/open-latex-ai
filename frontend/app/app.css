@@ -189,4 +189,6 @@ body {
 
 }
 
-@plugin "@tailwindcss/typography";
+.markdown-body pre {
+  background-color: #21262d !important;
+}

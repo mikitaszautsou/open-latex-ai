@@ -7,9 +7,14 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
-import "katex/dist/katex.min.css";
+
 import remarkGfm from "remark-gfm";
-import rehypeHighlight from "rehype-highlight"; // <--- Import highlight plugin
+import rehypeHighlight from "rehype-highlight";
+
+import { cn } from "~/lib/utils";
+
+import "katex/dist/katex.min.css";
+import "github-markdown-css/github-markdown-light.css";
 import "highlight.js/styles/github-dark.css";
 
 export type MessageProps = {
@@ -18,10 +23,6 @@ export type MessageProps = {
   role: ROLE;
   isNew?: boolean;
 };
-
-function preprocessLatex(markdown: string) {
-  return markdown;
-}
 
 function MessageComponent({ author, message, role, isNew }: MessageProps) {
   const isUser = role === ROLE.USER;
@@ -34,7 +35,7 @@ function MessageComponent({ author, message, role, isNew }: MessageProps) {
           : "bg-[#ffffff] animate-ai-message-appear"
       )}
     >
-      <div className="w-full prose dark:prose-invert">
+      <div className={cn("w-full", !isUser && "markdown-body")}>
         {isUser ? (
           message
         ) : (
@@ -42,7 +43,7 @@ function MessageComponent({ author, message, role, isNew }: MessageProps) {
             remarkPlugins={[remarkMath, remarkGfm]}
             rehypePlugins={[rehypeKatex, rehypeHighlight]}
           >
-            {preprocessLatex(message)}
+            {message}
           </ReactMarkdown>
         )}
       </div>
