@@ -61,7 +61,7 @@ export class GeminiService implements AssistantService, OnModuleInit {
       };
     }
   }
-  onModuleInit() {}
+  onModuleInit() { }
 
   async generateResponse(
     messages: Message[],
@@ -74,7 +74,7 @@ export class GeminiService implements AssistantService, OnModuleInit {
         parts: [{ text: msg.content }],
       })) as Content[];
 
-      const modelFunction = MODELS[modelName ?? 'gemini-2.5-pro-preview-03-25'];
+      const modelFunction = MODELS[modelName ?? 'gemini-2.5-pro-preview-05-06'];
       const response = await modelFunction(genAI, history);
       return response ?? '';
     } catch (error) {
@@ -90,10 +90,10 @@ const MODELS: {
     messages: Content[],
   ) => Promise<string | undefined>;
 } = {
-  'gemini-2.5-pro-preview-03-25': async (genAI, messages) => {
+  'gemini-2.5-pro-preview-05-06': async (genAI, messages) => {
     return (
       await genAI.models.generateContent({
-        model: 'gemini-2.5-pro-preview-03-25',
+        model: 'gemini-2.5-pro-preview-05-06',
         config: {
           responseMimeType: 'text/plain',
         },
@@ -104,7 +104,7 @@ const MODELS: {
   'gemini-2.5-concise': async (genAI, messages) => {
     return (
       await genAI.models.generateContent({
-        model: 'gemini-2.5-pro-preview-03-25',
+        model: 'gemini-2.5-pro-preview-05-06',
         config: {
           responseMimeType: 'text/plain',
           systemInstruction: {
@@ -118,7 +118,7 @@ const MODELS: {
   'gemini-2.5-google-search': async (genAI, messages) => {
     return (
       await genAI.models.generateContent({
-        model: 'gemini-2.5-pro-preview-03-25',
+        model: 'gemini-2.5-pro-preview-05-06',
         config: {
           responseMimeType: 'text/plain',
           tools: [
@@ -144,24 +144,3 @@ const MODELS: {
   },
 };
 
-// const MODELS = {
-//   'gemini-2.5-pro-preview-03-25': async (genAI: GoogleGenAI) => {
-//     await genAI.models.generateContent({
-//       model: modelName 'gemini-2.5-pro-preview-03-25',
-//       config: {
-//         thinkingConfig: {
-//           includeThoughts: modelName !== 'gemini-2.5-pro-preview-03-25',
-//         },
-//         responseMimeType: 'text/plain',
-//         systemInstruction: {
-//           ...(modelName === 'gemini-2.5-concise'
-//             ? {
-//                 text: CONCISE_PROMPT,
-//               }
-//             : {}),
-//         },
-//       },
-//       contents: history,
-//     })
-//   }
-// }

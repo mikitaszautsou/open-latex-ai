@@ -47,7 +47,7 @@ const ASSISTANTS: Assistant[] = [
     id: "gemini-2.5-pro",
     title: "Gemini 2.5-pro",
     provider: "gemini",
-    model: "gemini-2.5-pro-preview-03-25",
+    model: "gemini-2.5-pro-preview-05-06",
   },
   {
     id: "gemini-2.5-concise",
