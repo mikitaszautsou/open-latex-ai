@@ -1,7 +1,21 @@
 import clsx from "clsx";
 import { ROLE } from "~/services/chat-api";
-import { MarkdownViewer } from "react-github-markdown";
 import { memo } from "react";
+import Latex from "react-latex";
+
+import React from "react";
+import ReactMarkdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+
+import remarkGfm from "remark-gfm";
+import rehypeHighlight from "rehype-highlight";
+
+import { cn } from "~/lib/utils";
+
+import "katex/dist/katex.min.css";
+import "github-markdown-css/github-markdown-light.css";
+import "highlight.js/styles/github-dark.css";
 
 export type MessageProps = {
   author: string;
@@ -21,11 +35,16 @@ function MessageComponent({ author, message, role, isNew }: MessageProps) {
           : "bg-[#ffffff] animate-ai-message-appear"
       )}
     >
-      <div className="prose prose-sm dark:prose-invert w-full">
+      <div className={cn("w-full", !isUser && "markdown-body")}>
         {isUser ? (
           message
         ) : (
-          <MarkdownViewer value={message} isDarkTheme={false} />
+          <ReactMarkdown
+            remarkPlugins={[remarkMath, remarkGfm]}
+            rehypePlugins={[rehypeKatex, rehypeHighlight]}
+          >
+            {message}
+          </ReactMarkdown>
         )}
       </div>
     </div>

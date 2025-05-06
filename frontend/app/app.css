@@ -188,3 +188,7 @@ body {
   }
 
 }
+
+.markdown-body pre {
+  background-color: #21262d !important;
+}
