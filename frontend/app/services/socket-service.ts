@@ -8,7 +8,7 @@ class SocketService {
     constructor() {
         this.connect()
     }
-    connect(url: string = 'http://localhost:8080', onConnect?: () => void, onDisconnect?: () => void) {
+    connect(url: string = import.meta.env.VITE_WEBSOCKETS_URL, onConnect?: () => void, onDisconnect?: () => void) {
         const token = useAuthStore.getState().token
         this.socket = io(url, {
             autoConnect: true,
