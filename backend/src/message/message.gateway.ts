@@ -14,11 +14,11 @@ import { Readable } from "stream";
 import { response } from "express";
 import { AssistantFactoryService } from "src/assistant/assistant-factory.service";
 
-@WebSocketGateway(8080, { transports: ['websocket'], cors: { origin: '*' } })
+@WebSocketGateway({ transports: ['websocket'], cors: { origin: '*' } })
 export class MessageGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @WebSocketServer()
-    server: Server;
+    server: Server; 
 
     constructor(
         private readonly messageService: MessageService,
