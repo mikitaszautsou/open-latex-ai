@@ -14,7 +14,7 @@ import { Readable } from "stream";
 import { response } from "express";
 import { AssistantFactoryService } from "src/assistant/assistant-factory.service";
 
-@WebSocketGateway({ transports: ['websocket'], cors: { origin: '*' } })
+@WebSocketGateway({ transports: ['websocket'], cors: { origin: '*', credentials: true }, path: '/socket.io/' })
 export class MessageGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @WebSocketServer()
