@@ -33,7 +33,7 @@ export type ConversationProps = {
 type Assistant = {
   id: string;
   title: string;
-  provider: AIProvider;
+  provider: string;
   model: string;
 };
 const ASSISTANTS: Assistant[] = [
@@ -43,60 +43,66 @@ const ASSISTANTS: Assistant[] = [
     provider: "claude",
     model: "claude-3-7-sonnet-latest",
   },
+  // {
+  //   id: "gemini-2.5-pro",
+  //   title: "Gemini 2.5-pro",
+  //   provider: "gemini",
+  //   model: "gemini-2.5-pro-preview-05-06",
+  // },
+  // {
+  //   id: "gemini-2.5-concise",
+  //   title: "Gemini 2.5(concise)",
+  //   provider: "gemini",
+  //   model: "gemini-2.5-concise",
+  // },
+  // {
+  //   id: "gemini-2.5-google-search",
+  //   title: "Gemini 2.5(Google Search)",
+  //   provider: "gemini",
+  //   model: "gemini-2.5-google-search",
+  // },
+  // {
+  //   id: "gemini-2.5-flash",
+  //   title: "Gemini 2.5-flash",
+  //   provider: "gemini",
+  //   model: "gemini-2.5-flash-preview-04-17",
+  // },
+  // {
+  //   id: "o4-mini",
+  //   title: "o4-mini",
+  //   provider: "openai",
+  //   model: "o4-mini",
+  // },
+  // {
+  //   id: "gpt-4.5",
+  //   title: "gpt-4.5",
+  //   provider: "openai",
+  //   model: "gpt-4.5-preview",
+  // },
+  // {
+  //   id: "o3",
+  //   title: "o3",
+  //   provider: "openai",
+  //   model: "o3",
+  // },
+  // {
+  //   id: "deepseek",
+  //   title: "DeepSeek Chat",
+  //   provider: "deepseek",
+  //   model: "deepseek",
+  // },
+  // {
+  //   id: "cerebras",
+  //   title: "LLama-3.3(Cerebras)",
+  //   provider: "cerebras",
+  //   model: "llama-3.3",
+  // },
   {
-    id: "gemini-2.5-pro",
-    title: "Gemini 2.5-pro",
-    provider: "gemini",
-    model: "gemini-2.5-pro-preview-05-06",
-  },
-  {
-    id: "gemini-2.5-concise",
-    title: "Gemini 2.5(concise)",
-    provider: "gemini",
-    model: "gemini-2.5-concise",
-  },
-  {
-    id: "gemini-2.5-google-search",
-    title: "Gemini 2.5(Google Search)",
-    provider: "gemini",
-    model: "gemini-2.5-google-search",
-  },
-  {
-    id: "gemini-2.5-flash",
-    title: "Gemini 2.5-flash",
-    provider: "gemini",
-    model: "gemini-2.5-flash-preview-04-17",
-  },
-  {
-    id: "o4-mini",
-    title: "o4-mini",
-    provider: "openai",
-    model: "o4-mini",
-  },
-  {
-    id: "gpt-4.5",
-    title: "gpt-4.5",
-    provider: "openai",
-    model: "gpt-4.5-preview",
-  },
-  {
-    id: "o3",
-    title: "o3",
-    provider: "openai",
-    model: "o3",
-  },
-  {
-    id: "deepseek",
-    title: "DeepSeek Chat",
-    provider: "deepseek",
-    model: "deepseek",
-  },
-  {
-    id: "cerebras",
-    title: "LLama-3.3(Cerebras)",
-    provider: "cerebras",
-    model: "llama-3.3",
-  },
+    id: 'fireworks-deepseek',
+    title: 'Deepseek(Fireworks)',
+    provider: 'fireworks',
+    model: 'deepseek',
+  }
 ];
 
 export function Conversation({
@@ -114,23 +120,24 @@ export function Conversation({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const prevMessagesRef = useRef(messages);
 
-  useEffect(() => {
-    if (messages) {
-      const currentIds = new Set(messages.map((m) => m.id));
-      const prevIds = new Set(prevMessagesRef.current?.map((m) => m.id) || []);
+  console.log('debug', { chatId, messages })
+  // useEffect(() => {
+  //   if (messages) {
+  //     const currentIds = new Set(messages.map((m) => m.id));
+  //     const prevIds = new Set(prevMessagesRef.current?.map((m) => m.id) || []);
 
-      const newIds = [...currentIds].filter((id) => !prevIds.has(id));
-      if (newIds.length > 0) {
-        setNewMessageIds(new Set(newIds));
-        // Clear the "new" status after animation completes
-        setTimeout(() => {
-          setNewMessageIds(new Set());
-        }, 1000);
-      }
+  //     const newIds = [...currentIds].filter((id) => !prevIds.has(id));
+  //     if (newIds.length > 0) {
+  //       setNewMessageIds(new Set(newIds));
+  //       // Clear the "new" status after animation completes
+  //       setTimeout(() => {
+  //         setNewMessageIds(new Set());
+  //       }, 1000);
+  //     }
 
-      prevMessagesRef.current = messages;
-    }
-  }, [messages]);
+  //     prevMessagesRef.current = messages;
+  //   }
+  // }, [messages]);
   const selectedChat = chats?.find((c) => c.id === chatId);
   const updateSettings = useMutation({
     mutationFn: (patch: { provider?: AIProvider; model?: string }) =>
@@ -163,18 +170,18 @@ export function Conversation({
     }, 100);
   };
   const handleMessageSend = (newUserMessage: string) => {
-    setMessageSending(true);
-    const newMessage = {
-      id: `temp-${Date.now()}`,
-      content: newUserMessage,
-      role: ROLE.USER,
-      pending: true,
-      chatId: "",
-    } as MessageType;
-    queryClient.setQueryData<MessageType[]>(
-      ["messages", chatId],
-      (old) => old?.concat(newMessage) ?? []
-    );
+    // setMessageSending(true);
+    // const newMessage = {
+    //   id: `temp-${Date.now()}`,
+    //   content: newUserMessage,
+    //   role: ROLE.USER,
+    //   pending: true,
+    //   chatId: "",
+    // } as MessageType;
+    // queryClient.setQueryData<MessageType[]>(
+    //   ["messages", chatId],
+    //   (old) => old?.concat(newMessage) ?? []
+    // );
   };
   const handleMessageReceived = (newMessage: MessageType) => {
     setMessageSending(false);
@@ -184,6 +191,38 @@ export function Conversation({
     );
   };
   const displayMessages = [...(messages || []), ...optimisticMessages];
+  useEffect(() => {
+    return chatApi.onNewMessage((newMessage) => {
+      console.log('message received', newMessage)
+      queryClient.setQueryData<MessageType[]>(
+        ["messages", chatId],
+        // (old) => old?.map(e => e.id === newMessage.id ? {...e, content: e.content + } : e)
+        (old) => {
+          const newM = (old || []).concat(newMessage)
+          return newM
+        }
+      );
+    })
+  }, [queryClient, chatId])
+
+  useEffect(() => {
+    return chatApi.onNewMessageChunk((newChunk) => {
+      queryClient.setQueryData<MessageType[]>(
+        ["messages", chatId],
+        (old) => old?.map(e => e.id === newChunk.messageId ? { ...e, content: e.content + newChunk.chunk } : e)
+      );
+    })
+  }, [queryClient, chatId])
+
+
+  useEffect(() => {
+    return chatApi.onChatUpdate((chat) => {
+      queryClient.setQueryData<MessageType[]>(
+        ["chats"],
+        (old) => old?.map(c => c.id === chatId ? { ...c, title: chat.title, emoji: chat.emoji} : c)
+      );
+    })
+  }, [queryClient, chatId])
   return (
     <div
       className={cn(
@@ -240,19 +279,12 @@ export function Conversation({
           />
         ))}
       </div>
-      <div className="h-0">
-        <Typing
-          className={clsx(
-            "absolute transition-opacity top-[-50px] left-4 z-20",
-            isMessageSending ? "opacity-100" : "opacity-0"
-          )}
-        />
-      </div>
+
       <ChatInput
         className="right-0 bottom-0 left-0 p-2 basis-0 z-10"
         chatId={chatId}
         onSendMessage={handleMessageSend}
-        onMessageSent={handleMessageReceived}
+      // onMessageSent={handleMessageReceived}
       />
     </div>
   );

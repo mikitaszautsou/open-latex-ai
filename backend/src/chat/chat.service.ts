@@ -8,7 +8,6 @@ import { Chat } from './entities/chat.entity';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AssistantFactoryService } from 'src/assistant/assistant-factory.service';
-import { AIProvider } from 'src/assistant/ai-provider.type';
 import { Role } from 'generated/prisma';
 import { UpdateChatDto } from './dto/update-chat.dto';
 
@@ -19,15 +18,15 @@ export class ChatService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly assistantFactoryService: AssistantFactoryService,
-  ) {}
+  ) { }
 
   async create(dto: CreateChatDto, userId: string): Promise<Chat> {
     const chat = await this.prisma.chat.create({
       data: {
         title: dto.title ?? 'New Chat',
         userId,
-        provider: dto.provider ?? undefined,
-        model: dto.model ?? undefined,
+        provider: dto.provider ?? 'fireworks',
+        model: dto.model ?? 'deepseek',
       },
     });
 
@@ -81,40 +80,16 @@ export class ChatService {
     }
   }
 
-  async generateAndSetTitleAndEmoji(
+  async updateChat(
     chatId: string,
-    messageContent: string,
-    userId: string,
-    provider?: AIProvider,
-    model?: string,
-  ) {
-    await this.ensureChatExists(chatId, userId);
-    const svc = this.assistantFactoryService.getService(provider);
-    const { title, emoji } = await svc.generateTitleAndEmoji(
-      messageContent,
-      model,
-    );
-    await this.prisma.chat.update({
+    dto: { title?: string; emoji?: string }
+  ): Promise<Chat> {
+    return this.prisma.chat.update({
       where: { id: chatId },
-      data: { title, emoji },
-    });
-  }
-  async generateAIResponse(
-    chatId: string,
-    userId: string,
-    provider?: AIProvider,
-    model?: string,
-  ) {
-    await this.ensureChatExists(chatId, userId);
-    const history = await this.prisma.message.findMany({
-      where: { chatId },
-      orderBy: { createdAt: 'asc' },
-      select: { content: true, role: true },
-    });
-    const svc = this.assistantFactoryService.getService(provider);
-    const content = await svc.generateResponse(history, model);
-    return this.prisma.message.create({
-      data: { chatId, content, role: Role.ASSISTANT },
+      data: {
+        title: dto.title,
+        emoji: dto.emoji
+      },
     });
   }
 

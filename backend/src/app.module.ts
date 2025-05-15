@@ -11,10 +11,10 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [    ConfigModule.forRoot({ isGlobal: true }),
+  imports: [ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
     AuthModule,
-    UserModule, 
+    UserModule,
     ChatModule,
     MessageModule,
     AssistantModule,],

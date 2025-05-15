@@ -26,15 +26,15 @@ export function ChatInput({
   const { mutate: sendMessageMutation, isPending: isSendingMessage } =
     useMutation({
       mutationFn: async (message: string) => {
-        const newMessage = await chatApi.createMessage(chatId!, {
+        chatApi.createMessage(chatId!, {
           content: message.trim(),
           role: ROLE.USER,
         });
-        const newMessages = await chatApi.getMessages(chatId!);
-        const newResponse = newMessages.at(-1);
-        if (newResponse) {
-          onMessageSent?.(newResponse);
-        }
+        // const newMessages = await chatApi.getMessages(chatId!);
+        // const newResponse = newMessages.at(-1);
+        // if (newResponse) {
+        //   onMessageSent?.(newResponse);
+        // }
       },
       onSuccess: () => {},
     });

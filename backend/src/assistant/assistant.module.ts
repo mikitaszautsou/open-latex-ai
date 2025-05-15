@@ -5,9 +5,10 @@ import { GeminiService } from './gemini.service';
 import { OpenAIService } from './openai.service';
 import { DeepSeekAIService } from './deepseek.service';
 import { CerebrasService } from './cerebras-ai.service';
+import { FireworksAIService } from './fireworks.service';
 
 @Module({
-  providers: [ClaudeService, GeminiService, OpenAIService, DeepSeekAIService, AssistantFactoryService, CerebrasService],
-  exports: [AssistantFactoryService],
+  providers: [ClaudeService, GeminiService, OpenAIService, DeepSeekAIService, AssistantFactoryService, CerebrasService, FireworksAIService],
+  exports: [AssistantFactoryService, FireworksAIService],
 })
 export class AssistantModule {}

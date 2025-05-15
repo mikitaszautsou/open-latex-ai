@@ -16,6 +16,7 @@ import { cn } from "~/lib/utils";
 import "katex/dist/katex.min.css";
 import "github-markdown-css/github-markdown-light.css";
 import "highlight.js/styles/github-dark.css";
+import { Typing } from "./Typing";
 
 export type MessageProps = {
   author: string;
@@ -26,6 +27,9 @@ export type MessageProps = {
 
 function MessageComponent({ author, message, role, isNew }: MessageProps) {
   const isUser = role === ROLE.USER;
+  if (!message) {
+    return <Typing />
+  }
   return (
     <div
       className={clsx(

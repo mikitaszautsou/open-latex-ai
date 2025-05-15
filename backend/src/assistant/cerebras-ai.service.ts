@@ -69,7 +69,6 @@ export class CerebrasService implements AssistantService, OnModuleInit {
                     content: '',
                 });
             }
-            console.log('api key', this.apiKey)
 
             const response = await axios.post(
                 this.apiUrl,

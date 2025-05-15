@@ -1,36 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { AssistantService } from './assistant-service.interface';
+import { AssistantService, StreamingAssistService } from './assistant-service.interface';
 import { ClaudeService } from './claude.service';
 import { GeminiService } from './gemini.service';
 import { OpenAIService } from './openai.service';
-import { AIProvider } from './ai-provider.type';
 import { DeepSeekAIService } from './deepseek.service';
 import { CerebrasService } from './cerebras-ai.service';
+import { FireworksAI } from '@fireworksai/sdk';
+import { FireworksAIService } from './fireworks.service';
 
 @Injectable()
 export class AssistantFactoryService {
   constructor(
-    private claude: ClaudeService,
-    private gemini: GeminiService,
-    private openai: OpenAIService,
-    private deepseek: DeepSeekAIService,
-    private cerebras: CerebrasService,
+    private fireworksService: FireworksAIService,
+    private claudeService: ClaudeService,
   ) { }
 
-  getService(provider: AIProvider = 'gemini'): AssistantService {
-    console.log('provider', provider)
+  getService(provider: string = 'gemini'): StreamingAssistService {
     switch (provider) {
-      case 'openai':
-        return this.openai;
-      case 'gemini':
-        return this.gemini;
-      case 'deepseek':
-        return this.deepseek;
-      case 'cerebras':
-          return this.cerebras;
+      case 'fireworks':
+        return this.fireworksService;
       case 'claude':
+        return this.claudeService;
       default:
-        return this.claude;
+        return this.fireworksService;
     }
   }
 }

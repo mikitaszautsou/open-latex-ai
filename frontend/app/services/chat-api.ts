@@ -1,4 +1,5 @@
 import { api } from "./api";
+import { socketService } from "./socket-service";
 
 export type AIProvider = "claude" | "gemini" | "openai" | "deepseek" | "cerebras";
 
@@ -37,20 +38,26 @@ export enum ROLE {
 }
 
 export const chatApi = {
-  getChats: async (): Promise<Chat[]> => {
-    const response = await api.get("/chats");
-    return response.data;
-  },
-  getMessages: async (chatId: string): Promise<Message[]> => {
-    const response = await api.get(`/chat/${chatId}/messages`);
-    return response.data;
-  },
-  createMessage: async (
+  getChats: () => new Promise((resolve: any) => {
+    socketService.emitMessage({ message: 'getChats', callback: (data) => resolve(data.chats) })
+  }),
+  getMessages: (chatId: string) => new Promise((resolve: any) => {
+    socketService.emitMessage({ message: 'getMessages', payload: { chatId }, callback: (data) => resolve(data) })
+  }),
+  createMessage: (
     chatId: string,
     message: CreateMessageDto
-  ): Promise<Message> => {
-    const response = await api.post(`/chat/${chatId}/messages`, message);
-    return response.data;
+  ) => {
+    socketService.emitMessage({ message: 'createMessage', payload: { chatId, message }})
+  },
+  onNewMessage: (callback: (data: Message) => void) => {
+    return socketService.onMessage('newMessage', callback)
+  },
+  onNewMessageChunk: (callback: (data: {messageId: string, chunk: string}) => void) => {
+    return socketService.onMessage('newMessageChunk', callback)
+  },
+  onChatUpdate: (callback: (data: { title: string, emoji: string, chatId: string }) => void) => {
+    return socketService.onMessage('updateChat', callback)
   },
   createChat: async (chat?: CreateChatDto): Promise<Chat> => {
     const response = await api.post("/chats", chat || {});
