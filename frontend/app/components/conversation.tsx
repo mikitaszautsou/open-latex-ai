@@ -22,7 +22,8 @@ import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "~/query-client";
 import { Typing } from "./Typing";
 import clsx from "clsx";
-import { cn } from "~/lib/utils";
+import { cn, debounce } from "~/lib/utils";
+import { getScrollPosition, saveScrollPosition } from "~/lib/scroll-position";
 
 export type ConversationProps = {
   chatId?: string;
@@ -140,7 +141,7 @@ export function Conversation({
   // }, [messages]);
   const selectedChat = chats?.find((c) => c.id === chatId);
   const updateSettings = useMutation({
-    mutationFn: (patch: { provider?: AIProvider; model?: string }) =>
+    mutationFn: (patch: { provider?: string; model?: string }) =>
       chatApi.updateChatSettings(chatId!, patch),
     onSuccess: (updated) => {
       queryClient.setQueryData<Chat[]>(
@@ -223,6 +224,27 @@ export function Conversation({
       );
     })
   }, [queryClient, chatId])
+
+
+  useEffect(() => {
+    if (chatId && scrollContainerRef.current) {
+      const savedPosition = getScrollPosition(chatId);
+      scrollContainerRef.current.scrollTo(0, savedPosition);
+    }
+  }, [chatId]);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container || !chatId) return;
+
+    const handleScroll = debounce(() => {
+      saveScrollPosition(chatId, container.scrollTop);
+    }, 200);
+
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [chatId]);
+
   return (
     <div
       className={cn(

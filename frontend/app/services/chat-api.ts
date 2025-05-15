@@ -66,7 +66,7 @@ export const chatApi = {
 
   updateChatSettings: async (
     chatId: string,
-    data: { provider?: "claude" | "gemini" | "openai"; model?: string }
+    data: { provider?: string; model?: string }
   ): Promise<Chat> => {
     const resp = await api.patch<Chat>(`/chats/${chatId}`, data);
     return resp.data;
