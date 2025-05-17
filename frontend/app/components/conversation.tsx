@@ -24,6 +24,7 @@ import { Typing } from "./Typing";
 import clsx from "clsx";
 import { cn, debounce } from "~/lib/utils";
 import { getScrollPosition, saveScrollPosition } from "~/lib/scroll-position";
+import Hammer from 'react-hammerjs';
 
 export type ConversationProps = {
   chatId?: string;
@@ -120,6 +121,7 @@ export function Conversation({
   const [newMessageIds, setNewMessageIds] = useState(new Set());
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const prevMessagesRef = useRef(messages);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   console.log('debug', { chatId, messages })
   // useEffect(() => {
@@ -246,68 +248,73 @@ export function Conversation({
   }, [chatId]);
 
   return (
-    <div
-      className={cn(
-        "relative flex flex-col flex-1 bg-[#eff1f5] min-w-0 grow text basis-0 transition-[padding]",
-        isChatsOpen && "lg:pl-[400px]"
-      )}
-    >
-      <div className="flex items-center bg-white pr-4 shadow-[0px_4px_12px_rgba(0,0,0,0.1)] w-full h-15 basis-0 min-h-14 z-10">
-        <button
-          className="text-[30px] flex justify-cente h-full w-11 justify-center items-center cursor-pointer lg:hidden"
-          onClick={onGoBackClick}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 320 512"
-            className="w-3"
-          >
-            <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192" />
-          </svg>
-        </button>
-        <span className="text-2xl pr-2  lg:pl-3" onClick={onGoBackClick}>
-          {selectedChat?.emoji}
-        </span>{" "}
-        <span className="text-sm font-bold" onClick={onGoBackClick}>
-          {selectedChat?.title}
-        </span>
-        <span className="ml-auto">
-          <Select
-            value={selectedAssistant?.id}
-            onValueChange={handleAssistantChange}
-          >
-            <SelectTrigger className="w-42">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {ASSISTANTS.map((a) => (
-                <SelectItem key={a.id} value={a.id}>
-                  {a.title}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </span>
-      </div>
+    <Hammer onSwipeRight={(e) => {
+      onGoBackClick()
+    }}>
       <div
-        className="flex flex-col gap-4 px-4 overflow-auto grow basis-0 py-3 pb-30"
-        ref={scrollContainerRef}
+        className={cn(
+          "relative flex flex-col flex-1 bg-[#eff1f5] min-w-0 grow text basis-0 transition-[padding]",
+          isChatsOpen && "lg:pl-[400px]"
+        )}
+        ref={containerRef}
       >
-        {displayMessages?.map((m) => (
-          <Message
-            author={m.role === ROLE.USER ? "User" : "AI"}
-            role={m.role}
-            message={m.content}
-          />
-        ))}
-      </div>
+        <div className="flex items-center bg-white pr-4 shadow-[0px_4px_12px_rgba(0,0,0,0.1)] w-full h-15 basis-0 min-h-14 z-10">
+          <button
+            className="text-[30px] flex justify-cente h-full w-11 justify-center items-center cursor-pointer lg:hidden"
+            onClick={onGoBackClick}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 320 512"
+              className="w-3"
+            >
+              <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192" />
+            </svg>
+          </button>
+          <span className="text-2xl pr-2  lg:pl-3" onClick={onGoBackClick}>
+            {selectedChat?.emoji}
+          </span>{" "}
+          <span className="text-sm font-bold" onClick={onGoBackClick}>
+            {selectedChat?.title}
+          </span>
+          <span className="ml-auto">
+            <Select
+              value={selectedAssistant?.id}
+              onValueChange={handleAssistantChange}
+            >
+              <SelectTrigger className="w-42">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {ASSISTANTS.map((a) => (
+                  <SelectItem key={a.id} value={a.id}>
+                    {a.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </span>
+        </div>
+        <div
+          className="flex flex-col gap-4 px-4 overflow-auto grow basis-0 py-3 pb-30"
+          ref={scrollContainerRef}
+        >
+          {displayMessages?.map((m) => (
+            <Message
+              author={m.role === ROLE.USER ? "User" : "AI"}
+              role={m.role}
+              message={m.content}
+            />
+          ))}
+        </div>
 
-      <ChatInput
-        className="right-0 bottom-0 left-0 p-2 basis-0 z-10"
-        chatId={chatId}
-        onSendMessage={handleMessageSend}
-      // onMessageSent={handleMessageReceived}
-      />
-    </div>
+        <ChatInput
+          className="right-0 bottom-0 left-0 p-2 basis-0 z-10"
+          chatId={chatId}
+          onSendMessage={handleMessageSend}
+        // onMessageSent={handleMessageReceived}
+        />
+      </div>
+    </Hammer>
   );
 }

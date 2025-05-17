@@ -27,18 +27,23 @@ export type MessageProps = {
 
 function MessageComponent({ author, message, role, isNew }: MessageProps) {
   const isUser = role === ROLE.USER;
-  if (!message) {
-    return <Typing />
-  }
   return (
     <div
       className={clsx(
-        "flex p-2.5 rounded-xl w-max max-w-full transition-opacity",
+        "flex p-2.5 rounded-xl w-max max-w-full transition-all duration-300",
         isUser
-          ? "animate-user-message-appear bg-[#0061ff] text-white self-end"
-          : "bg-[#ffffff] animate-ai-message-appear"
+          ? "bg-[#0061ff] text-white self-end"
+          : "bg-[#ffffff]",
+        !message && 'w-15 min-h-8 px-1.5 py-1.5 ml-1.5 !bg-[#e4e4ec] rounded-full flex justify-center items-center animate-[typing]',
       )}
     >
+      {
+        !message && <>
+          <div className="float-left w-2 h-2 min-w-2 min-h-2 mx-1 bg-gray-500 rounded-full animate-[loadingFade_0.8s_infinite]"></div>
+          <div className="float-left w-2 h-2 min-w-2 min-h-2 mx-1 bg-gray-500 rounded-full animate-[loadingFade_0.8s_infinite] delay-75"></div>
+          <div className="float-left w-2 h-2 min-w-2 min-h-2  mx-1 bg-gray-500 rounded-full animate-[loadingFade_0.8s_infinite] delay-150"></div>
+        </>
+      }
       <div className={cn("w-full", !isUser && "markdown-body")}>
         {isUser ? (
           message
