@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { useNavigate, useParams } from "react-router";
 import { chatApi, type Chat } from "~/services/chat-api";
 import { Button } from "./ui/button";
-import { EllipsisVertical, Pin, PinOff } from "lucide-react";
+import { Contact, EllipsisVertical, Pin, PinOff } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,14 +14,17 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "~/query-client";
 import { cn } from "~/lib/utils";
+import { motion } from 'framer-motion';
+import { useRef } from "react";
 
 export type ChatItemProps = {
   isActive?: boolean;
   chat: Chat;
-  onClick?: () => void;
+  onClick?: (params: {x: number, y:number }) => void;
 };
 
 export function ChatItem({ chat, isActive, onClick }: ChatItemProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
   const { mutate: pinMutation } = useMutation({
     mutationFn: () => chatApi.pinChat(chat.id),
     onSuccess: () => {
@@ -44,13 +47,19 @@ export function ChatItem({ chat, isActive, onClick }: ChatItemProps) {
       pinMutation();
     }
   };
+  
+  const handleClick = () => {
+    const element = containerRef.current?.getBoundingClientRect();
+    onClick?.({ x: element?.x ?? 0, y: element?.y ?? 0 });
+  }
   return (
     <div
+      ref={containerRef}
       className={cn(
         "flex items-center gap-4 px-3 py-3 cursor-pointer bg-white transition-[background] hover:bg-[#edf7ff]",
         isActive && "bg-[#edf7ff]"
       )}
-      onClick={onClick}
+      onClick={handleClick}
     >
       <div
         className={cn(

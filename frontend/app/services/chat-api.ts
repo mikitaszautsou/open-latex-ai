@@ -38,10 +38,10 @@ export enum ROLE {
 }
 
 export const chatApi = {
-  getChats: () => new Promise((resolve: any) => {
+  getChats: (): Promise<Chat[]> => new Promise((resolve) => {
     socketService.emitMessage({ message: 'getChats', callback: (data) => resolve(data.chats) })
   }),
-  getMessages: (chatId: string) => new Promise((resolve: any) => {
+  getMessages: (chatId: string): Promise<Message[]> => new Promise((resolve) => {
     socketService.emitMessage({ message: 'getMessages', payload: { chatId }, callback: (data) => resolve(data) })
   }),
   createMessage: (

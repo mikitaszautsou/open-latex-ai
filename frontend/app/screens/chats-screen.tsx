@@ -5,9 +5,10 @@ import { ChatItem } from "~/components/chat-item";
 import { Conversation } from "~/components/conversation";
 import { useChats } from "~/hooks/use-chats";
 import { queryClient } from "~/query-client";
-import { chatApi } from "~/services/chat-api";
+import { chatApi, type Chat } from "~/services/chat-api";
 import clsx from "clsx";
 import { FilePenLine } from "lucide-react";
+import { MorphingConversation } from "~/components/morphing-conversation";
 
 export type ChatsScreenProps = {
   isOpen?: boolean;
@@ -22,6 +23,9 @@ export function ChatsScreen({
   onChatClick,
 }: ChatsScreenProps) {
   const { data: chats } = useChats();
+  const [ selectedChatPosition, setSelectedChatPosition ] = useState<{ x: number, y: number}|null>(null);
+  const [ selectedChat, setSelectedChat ] = useState<Chat | null>(null);
+  const [isChatOpen, setChatOpen] = useState(false);
   const { mutate: createChatMutation, isPending } = useMutation({
     mutationFn: () =>
       chatApi.createChat({
@@ -38,7 +42,6 @@ export function ChatsScreen({
     createChatMutation();
   };
 
-  const visibleChats = chats;
   return (
     <div
       className={clsx(
@@ -46,7 +49,7 @@ export function ChatsScreen({
         !isOpen && "translate-x-[-100%]"
       )}
     >
-      <div className="flex items-center gap-3 bg-white px-3 shadow-[0px_4px_12px_rgba(0,0,0,0.1)] w-full h-15 z-10">
+      <div className="flex items-center gap-3 bg-white px-3 shadow-[0px_4px_12px_rgba(0,0,0,0.1)] w-full h-15 z-20">
         <span className="font-bold text-lg lg:hidden">Chats</span>
         <span className="font-bold text-xl flex grow justify-center lg:justify-start">
           Release 17-05-2024
@@ -61,16 +64,30 @@ export function ChatsScreen({
       </div>
       <div
         className={clsx(
-          "flex flex-col bg-white min-w-[300px] overflow-auto grow basis-0"
+          "relative flex flex-col bg-white min-w-[300px] overflow-auto grow basis-0 z-10"
         )}
       >
-        {visibleChats?.map((c) => (
+        {chats?.map((c) => (
           <ChatItem
             chat={c}
-            onClick={() => onChatClick?.(c.id)}
+            onClick={(pos) => {
+              setSelectedChat(c)
+              setSelectedChatPosition(pos)
+              // onChatClick?.(c.id)
+              setTimeout(() => {
+                setChatOpen(true)
+              }, 0)
+            }}
             isActive={c.id === selectedChatId}
           />
         ))}
+        {selectedChat && selectedChatPosition && <MorphingConversation chat={selectedChat} position={selectedChatPosition} isChatOpen={isChatOpen} onClick={() => {
+          setChatOpen(false);
+          setTimeout(() => {
+            setSelectedChatPosition(null);
+              setSelectedChat(null)
+          }, 400)
+        }} />}
       </div>
     </div>
   );
