@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { FireworksAI } from "@fireworksai/sdk";
 import { Readable } from "stream";
-import { BaseAssistantService, Message } from "./assistant-service.interface";
+import { BaseAssistantService, Message, MessageDelta } from "./assistant-service.interface";
 
 @Injectable()
 export class FireworksAIService extends BaseAssistantService {
@@ -15,7 +15,7 @@ export class FireworksAIService extends BaseAssistantService {
         });
     }
 
-    async generateResponseStream(messages: Message[], model?: string): Promise<AsyncIterable<string>> {
+    async generateResponseStream(messages: Message[], model?: string): Promise<AsyncIterable<MessageDelta>> {
         const completion = await this.fireworksAI.chat.completions.create({
             messages: messages.map(m => ({ role: m.role === 'ASSISTANT' ? 'assistant' : 'user', content: m.content })),
             // messages: [{ role: 'user', content: 'in react how can i use destructor in useEffect but my effect is async'}],
@@ -29,7 +29,7 @@ export class FireworksAIService extends BaseAssistantService {
             [Symbol.asyncIterator]: async function* () {
                 for await (const chunk of completion) {
                     const content = chunk.data.choices[0]?.delta?.content || '';
-                    yield content;
+                    yield { type: 'TEXT', content };
                 }
             }
         };

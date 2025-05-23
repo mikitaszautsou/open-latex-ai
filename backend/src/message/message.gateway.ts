@@ -5,7 +5,7 @@ import { MessageService } from "./message.service";
 import { UseGuards } from "@nestjs/common";
 import { WsJwtGuard } from "src/auth/guards/ws-jwt.guard";
 import { CreateMessageDto } from "./dto/create-message.dto";
-import { User } from "@prisma/client";
+import { MessageType, User } from "@prisma/client";
 import { ChatService } from "src/chat/chat.service";
 import { Message } from "./entities/message.entity";
 import { JWTPaylod } from "src/auth/auth.types";
@@ -18,7 +18,7 @@ import { AssistantFactoryService } from "src/assistant/assistant-factory.service
 export class MessageGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @WebSocketServer()
-    server: Server; 
+    server: Server;
 
     constructor(
         private readonly messageService: MessageService,
@@ -115,8 +115,8 @@ export class MessageGateway implements OnGatewayConnection, OnGatewayDisconnect 
             const chat = await this.chatService.findOne(chatId, user.sub);
             const assistantService = this.assistantFactoryService.getService(chat?.provider);
             const history = await this.messageService.findAllByChatId(chatId, user.sub);
-            const responseMessage = await this.messageService.create(chatId, { content: '', role: "ASSISTANT" }, user.sub);
-            this.server.emit('newMessage', responseMessage);
+            // const responseMessage = await this.messageService.create(chatId, { content: '', role: "ASSISTANT" }, user.sub);
+            // this.server.emit('newMessage', responseMessage);
 
             if (history.length <= 1) {
                 this.generateChatTitle(chat?.provider, message.content).then(async ({ emoji, title }) => {
@@ -124,41 +124,77 @@ export class MessageGateway implements OnGatewayConnection, OnGatewayDisconnect 
                     this.server.emit('updateChat', { title, emoji, chatId });
                 })
             }
+
             const messageStream = (await assistantService.generateResponseStream(history));
             let fullResponse = ''
+            let previousType: MessageType | null = null;
+            let currentMessage: Message | null = null;
             for await (const chunk of messageStream) {
-                this.server.emit('newMessageChunk', { chatId, messageId: responseMessage.id, chunk });
-                fullResponse += chunk;
+                if (chunk.type != previousType) {
+                    if (currentMessage) {
+                        await this.messageService.update(currentMessage.id, { content: fullResponse, role: currentMessage.role })
+                        fullResponse = '';
+                    }
+                    previousType = chunk.type;
+                    if (previousType === MessageType.THINKING) {
+                        currentMessage = await this.messageService.create(chatId, { content: chunk.content, role: "ASSISTANT", type: 'THINKING' }, user.sub);
+                    } else if (previousType === MessageType.THINKING_SIGNATURE) {
+                        currentMessage = await this.messageService.create(chatId, { content: chunk.content, role: "ASSISTANT", type: 'THINKING_SIGNATURE' }, user.sub);
+                    } else if (previousType === MessageType.TEXT) {
+                        currentMessage = await this.messageService.create(chatId, { content: chunk.content, role: "ASSISTANT", type: 'TEXT' }, user.sub);
+                    }
+                    this.server.emit('newMessage', currentMessage);
+
+                }
+                if (currentMessage) {
+                    this.server.emit('newMessageChunk', { chatId, messageId: currentMessage.id, chunk });
+                    fullResponse += chunk.content;
+                }
             }
-            await this.messageService.update(responseMessage.id, { content: fullResponse, role: responseMessage.role })
+            if (currentMessage) {
+                await this.messageService.update(currentMessage.id, { content: fullResponse, role: currentMessage.role })
+            }
         } catch (error) {
             console.error(error)
             throw new WsException('Failed to fetch messages: ' + error.message);
         }
     }
 
+    // @UseGuards(WsJwtGuard)
+    // @SubscribeMessage('generateAIResponse')
+    // async handleGenerateAIResponse(
+    //     @ConnectedSocket() client: Socket,
+    //     @MessageBody() data: { chatId: string }[]
+    // ) {
+    //     try {
+    //         const user = client.data.user as JWTPaylod;
+    //         const { chatId } = data[0];
+    //         const chat = await this.chatService.findOne(chatId, user.sub);
+    //         const assistantService = this.assistantFactoryService.getService(chat?.provider);
+    //         const history = await this.messageService.findAllByChatId(chatId, user.sub);
+    //         const message = await this.messageService.create(chatId, { content: '', role: "ASSISTANT" }, user.sub);
+    //         this.server.emit('newMessage', message);
+    //         console.log('emitted')
+    //         const messageStream = (await assistantService.generateResponse(history));
+    //         for await (const chunk of messageStream) {
+    //             this.server.emit('newMessageChunk', { chatId, messageId: message.id, chunk });
+    //         }
+    //     } catch (error) {
+    //         throw new WsException('Failed to fetch messages: ' + error.message);
+    //     }
+    // }
+
     @UseGuards(WsJwtGuard)
-    @SubscribeMessage('generateAIResponse')
-    async handleGenerateAIResponse(
-        @ConnectedSocket() client: Socket,
-        @MessageBody() data: { chatId: string }[]
-    ) {
+    @SubscribeMessage('deleteMessage')
+    async handleDeleteMessage(@ConnectedSocket() client: Socket, @MessageBody() data: { messageId: string }) {
+        const user = client.data.user as JWTPaylod;
+        const { messageId } = data;
+
         try {
-            const user = client.data.user as JWTPaylod;
-            const { chatId } = data[0];
-            const chat = await this.chatService.findOne(chatId, user.sub);
-            const assistantService = this.assistantFactoryService.getService(chat?.provider);
-            const history = await this.messageService.findAllByChatId(chatId, user.sub);
-            const message = await this.messageService.create(chatId, { content: '', role: "ASSISTANT" }, user.sub);
-            this.server.emit('newMessage', message);
-            console.log('emitted')
-            const messageStream = (await assistantService.generateResponse(history));
-            for await (const chunk of messageStream) {
-                this.server.emit('newMessageChunk', { chatId, messageId: message.id, chunk });
-            }
+            await this.messageService.delete(messageId, user.sub);
+            return { success: true, messageId };
         } catch (error) {
-            console.error(error)
-            throw new WsException('Failed to fetch messages: ' + error.message);
+            throw new WsException('Failed to delete message: ' + error.message);
         }
     }
 
@@ -184,7 +220,7 @@ Emoji: [Emoji]
 
 User Message: "${message}"`;
         const assistantService = this.assistantFactoryService.getService(provider);
-        const result = await assistantService.generateResponse([{ role: 'USER', content: prompt }]); // Use the potentially faster 'flash' model
+        const result = await assistantService.generateResponse([{ type: 'TEXT', role: 'USER', content: prompt }]); // Use the potentially faster 'flash' model
         const textResponse = result
 
         // Simple parsing - adjust regex if needed for robustness

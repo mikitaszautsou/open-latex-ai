@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import clsx from "clsx";
 import { useState, useRef, useEffect } from "react";
 import { queryClient } from "~/query-client";
-import { chatApi, ROLE, type Message } from "~/services/chat-api";
+import { chatApi, Role, type Message } from "~/services/chat-api";
 import { Send } from "lucide-react";
 
 export type ChatInputProps = {
@@ -28,7 +28,7 @@ export function ChatInput({
       mutationFn: async (message: string) => {
         chatApi.createMessage(chatId!, {
           content: message.trim(),
-          role: ROLE.USER,
+          role: Role.USER,
         });
         // const newMessages = await chatApi.getMessages(chatId!);
         // const newResponse = newMessages.at(-1);

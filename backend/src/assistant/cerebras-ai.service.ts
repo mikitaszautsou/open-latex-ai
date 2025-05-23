@@ -31,7 +31,7 @@ export class CerebrasService implements AssistantService, OnModuleInit {
         try {
             const prompt = `Based on the following user message, generate a concise chat title (max 5 words) and a single relevant emoji. Output *only* in the format: Title: [Generated Title] Emoji: [Emoji] User Message: "${messageContent}"`;
             const result = await this.generateResponse(
-                [{ role: 'USER', content: prompt }],
+                [{ type: 'TEXT', role: 'USER', content: prompt }],
                 'llama-3.3-70b',
             );
             const textResponse = result;

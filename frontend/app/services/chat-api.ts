@@ -22,26 +22,35 @@ export interface Message {
   id: string;
   chatId: string;
   content: string;
-  role: ROLE;
+  role: Role;
+  type: MessageType
 }
 
 export interface CreateMessageDto {
   content: string;
-  role: ROLE;
+  role: Role;
   provider?: AIProvider;
   model?: string;
 }
 
-export enum ROLE {
+export type MessageDelta = { type: MessageType, content: string }
+
+export enum Role {
   USER = "USER",
   ASSISTANT = "ASSISTANT",
 }
+
+export enum MessageType {
+  TEXT = 'TEXT',
+  THINKING = 'THINKING',
+  THINKING_SIGNATURE = 'THINKING_SIGNATURE'
+};
 
 export const chatApi = {
   getChats: () => new Promise((resolve: any) => {
     socketService.emitMessage({ message: 'getChats', callback: (data) => resolve(data.chats) })
   }),
-  getMessages: (chatId: string) => new Promise((resolve: any) => {
+  getMessages: (chatId: string): Promise<Message[]> => new Promise((resolve: any) => {
     socketService.emitMessage({ message: 'getMessages', payload: { chatId }, callback: (data) => resolve(data) })
   }),
   createMessage: (
@@ -53,9 +62,12 @@ export const chatApi = {
   onNewMessage: (callback: (data: Message) => void) => {
     return socketService.onMessage('newMessage', callback)
   },
-  onNewMessageChunk: (callback: (data: {messageId: string, chunk: string}) => void) => {
+  onNewMessageChunk: (callback: (data: {messageId: string, chunk: MessageDelta }) => void) => {
     return socketService.onMessage('newMessageChunk', callback)
   },
+  deleteMessage: (messageId: string) => new Promise((resolve: any) => {
+    socketService.emitMessage({ message: 'deleteMessage', payload: { messageId }, callback: (data) => resolve(data) })
+  }),
   onChatUpdate: (callback: (data: { title: string, emoji: string, chatId: string }) => void) => {
     return socketService.onMessage('updateChat', callback)
   },

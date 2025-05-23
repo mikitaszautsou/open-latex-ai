@@ -35,7 +35,7 @@ Emoji: [Emoji]
 User Message: "${messageContent}"`;
 
       const result = await this.generateResponse([
-        { role: 'USER', content: prompt },
+        { type: 'TEXT', role: 'USER', content: prompt },
       ]); // Use the potentially faster 'flash' model
       const textResponse = result;
 

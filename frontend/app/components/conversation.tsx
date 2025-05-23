@@ -5,7 +5,7 @@ import { useMessages } from "~/hooks/use-messages";
 import { useEffect, useRef, useState } from "react";
 import {
   chatApi,
-  ROLE,
+  Role,
   type AIProvider,
   type Chat,
   type Message as MessageType,
@@ -41,9 +41,9 @@ type Assistant = {
 const ASSISTANTS: Assistant[] = [
   {
     id: "claude",
-    title: "Claude 3.7 Sonnet",
+    title: "Claude 4 Opus",
     provider: "claude",
-    model: "claude-3-7-sonnet-latest",
+    model: "claude-4-opus-latest",
   },
   // {
   //   id: "gemini-2.5-pro",
@@ -115,6 +115,7 @@ export function Conversation({
   const { data: chats, isLoading } = useChats();
   const [isMessageSending, setMessageSending] = useState(false);
   const { data: messages } = useMessages(chatId);
+  console.log({ messages })
   const [optimisticMessages, setOptimisticMessages] = useState<MessageType[]>(
     []
   );
@@ -212,7 +213,7 @@ export function Conversation({
     return chatApi.onNewMessageChunk((newChunk) => {
       queryClient.setQueryData<MessageType[]>(
         ["messages", chatId],
-        (old) => old?.map(e => e.id === newChunk.messageId ? { ...e, content: e.content + newChunk.chunk } : e)
+        (old) => old?.map(e => e.id === newChunk.messageId ? { ...e, content: e.content + newChunk.chunk.content } : e)
       );
     })
   }, [queryClient, chatId])
@@ -252,6 +253,19 @@ export function Conversation({
       onGoBackClick()
     }
   })
+
+  const deleteMessageMutation = useMutation({
+    mutationFn: ({ messageId }: { messageId: string }) =>
+      chatApi.deleteMessage(messageId),
+    onSuccess: (_, { messageId, ...rest }) => {
+      console.log('filtering' ,messageId, rest)
+      queryClient.setQueryData<MessageType[]>(
+        ['messages', chatId],
+        (old) => old?.filter(m => m.id != messageId)
+      );
+    },
+  });
+
   return (
 
     <div
@@ -304,9 +318,11 @@ export function Conversation({
       >
         {displayMessages?.map((m) => (
           <Message
-            author={m.role === ROLE.USER ? "User" : "AI"}
+            type={m.type}
+            author={m.role === Role.USER ? "User" : "AI"}
             role={m.role}
             message={m.content}
+            onDelete={() => deleteMessageMutation.mutate({ messageId: m.id })}
           />
         ))}
       </div>

@@ -36,7 +36,7 @@ export class GeminiService implements AssistantService, OnModuleInit {
     User Message: "${messageContent}"`;
 
       const result = await this.generateResponse(
-        [{ role: 'USER', content: prompt }],
+        [{ 'type': 'TEXT', role: 'USER', content: prompt }],
         'gemini-2.5-flash-preview-04-17',
       );
       const textResponse = result;

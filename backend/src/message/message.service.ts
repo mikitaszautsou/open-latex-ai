@@ -35,6 +35,7 @@ export class MessageService {
     createMessageDto: CreateMessageDto,
     userId: string,
   ): Promise<Message> {
+    console.log('creating', { chatId, createMessageDto, userId })
     await this.chatService.ensureChatExists(chatId, userId);
     const chat = (await this.prisma.chat.findUnique({
       where: { id: chatId },
@@ -51,32 +52,15 @@ export class MessageService {
         content: createMessageDto.content,
         role: createMessageDto.role,
         chatId: chatId,
+        type: createMessageDto.type,
       },
     });
-
-    // if (isUserMessage && messageCount === 0) {
-    //   await this.chatService
-    //     .generateAndSetTitleAndEmoji(
-    //       chatId,
-    //       newMessage.content,
-    //       userId,
-    //       provider,
-    //       model
-    //     )
-    //     .catch(err => this.logger.error(err));
-    // }
-
-    // if (isUserMessage) {
-    //   await this.generateAIResponse(chatId, userId, provider, model)
-    //     .catch(err => this.logger.error(err));
-    // }
-
-    // return newMessage;
   }
   async update(
     messageId: string,
     updateMessageDto: UpdateMessageDto,
   ): Promise<Message> {
+    console.log('update', { messageId, updateMessageDto })
     const message = await this.prisma.message.findUnique({
       where: { id: messageId },
       include: { chat: true },
@@ -92,6 +76,25 @@ export class MessageService {
         content: updateMessageDto.content,
         role: updateMessageDto.role,
       },
+    });
+  }
+
+  async delete(messageId: string, userId: string): Promise<void> {
+    const message = await this.prisma.message.findFirst({
+      where: {
+        id: messageId,
+        chat: {
+          userId: userId
+        }
+      }
+    });
+
+    if (!message) {
+      throw new Error('Message not found or access denied');
+    }
+
+    await this.prisma.message.delete({
+      where: { id: messageId }
     });
   }
 
