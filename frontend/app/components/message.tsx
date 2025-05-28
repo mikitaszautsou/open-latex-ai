@@ -13,9 +13,10 @@ import rehypeHighlight from "rehype-highlight";
 
 import { cn } from "~/lib/utils";
 
+
 import "katex/dist/katex.min.css";
 import "github-markdown-css/github-markdown-light.css";
-import "highlight.js/styles/github-dark.css";
+// import "highlight.js/styles/github-dark.css";
 import { Typing } from "./Typing";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuLabel, ContextMenuSeparator } from "./ui/context-menu";
 import { ContextMenuTrigger } from "@radix-ui/react-context-menu";
@@ -37,7 +38,7 @@ function MessageComponent({ author, message, type, role, isNew, onDelete }: Mess
   return (
     <ContextMenu>
       <ContextMenuTrigger className={clsx(
-        "flex p-2.5 rounded-xl w-max max-w-full transition-all duration-300",
+        "flex p-2.5 rounded-xl w-max max-w-full transition-all duration-300 prose",
         isUser
           ? "bg-[#0061ff] text-white self-end"
           : "bg-[#ffffff]",
@@ -52,17 +53,23 @@ function MessageComponent({ author, message, type, role, isNew, onDelete }: Mess
             <div className="float-left w-2 h-2 min-w-2 min-h-2  mx-1 bg-gray-500 rounded-full animate-[loadingFade_0.8s_infinite] delay-150"></div>
           </>
         }
-        <div className={cn("w-full", !isUser && "markdown-body")}>
-          {isUser && message}
+        <div className={cn("w-full")}>
           {type == MessageType.THINKING && <>
             <Brain className="min-w-10 inline" />{message}
           </>}
-          {!isUser && type == MessageType.TEXT && (
+          {type == MessageType.TEXT && (
             <ReactMarkdown
               remarkPlugins={[remarkMath, remarkGfm]}
               rehypePlugins={[rehypeKatex, rehypeHighlight]}
             >
-              {message}
+              {message
+                // Convert display math delimiters \[ \] to $$ $$
+                .replace(/\\\[/g, '$$')
+                .replace(/\\\]/g, '$$')
+                // Convert inline math delimiters \( \) to $ $
+                .replace(/\\\(/g, '$')
+                .replace(/\\\)/g, '$')}
+
             </ReactMarkdown>
           )}
         </div>

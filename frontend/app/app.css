@@ -6,10 +6,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@theme {
-  --font-sans: "Quicksand", ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-}
 html,
 body {
   @apply bg-white dark:bg-gray-950;
@@ -189,6 +185,5 @@ body {
 
 }
 
-.markdown-body pre {
-  background-color: #21262d !important;
-}
+
+@plugin "@tailwindcss/typography";
