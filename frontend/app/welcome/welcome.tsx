@@ -64,11 +64,7 @@ export function Welcome() {
 
   const { isDesktop, isMobile } = useBreakpoints();
   useEffect(() => {
-    if (isDesktop) {
-      setChatsOpen(true);
-    } else {
       setChatsOpen(!chatId);
-    }
   }, [isDesktop, isMobile]);
   const handleChatClick = (id: string) => {
     setSelectedChatId(id);

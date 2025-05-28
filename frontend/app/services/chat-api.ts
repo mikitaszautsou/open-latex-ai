@@ -1,7 +1,7 @@
 import { api } from "./api";
 import { socketService } from "./socket-service";
 
-export type AIProvider = "claude" | "gemini" | "openai" | "deepseek" | "cerebras";
+export type AIProvider = "claude" | "gemini" | "openai" | "deepseek" | "cerebras" | "fireworks";
 
 export interface CreateChatDto {
   title?: string;

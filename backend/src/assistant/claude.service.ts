@@ -4,6 +4,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { Role } from "generated/prisma";
 import { MessageParam, ThinkingBlock, ThinkingBlockParam } from "@anthropic-ai/sdk/resources";
 import { MessageType } from "@prisma/client";
+import { Stream } from "@anthropic-ai/sdk/streaming";
 
 @Injectable()
 export class ClaudeService extends BaseAssistantService {
@@ -21,6 +22,7 @@ export class ClaudeService extends BaseAssistantService {
     async generateResponseStream(messages: Message[], model?: string): Promise<AsyncIterable<MessageDelta>> {
 
         const anthropicMessages: Anthropic.Messages.MessageParam[] = [];
+        console.log({ messages });
         for (const message of messages) {
             if (message.type === 'TEXT') {
                 if (message.role === Role.USER) {
@@ -40,6 +42,11 @@ export class ClaudeService extends BaseAssistantService {
                         (lastMessage?.content as Anthropic.Messages.ContentBlockParam[]).push({
                             type: 'text',
                             text: message.content
+                        })
+                    } else {
+                        anthropicMessages.push({
+                            role: 'assistant',
+                            content: message.content
                         })
                     }
                 }
@@ -66,8 +73,14 @@ export class ClaudeService extends BaseAssistantService {
         //     role: msg.role === Role.USER ? 'user' : 'assistant',
         //     content: msg.content
         // }) as MessageParam).filter(m => m.content.length > 0);
-        console.log(JSON.stringify({ anthropicMessages }, null ,2))
-        const response = await this.generateClaudeOpus4Config(anthropicMessages);
+        console.log(JSON.stringify({ anthropicMessages }, null, 2))
+        let response: Stream<Anthropic.Messages.RawMessageStreamEvent>;
+        if (model === 'claude-opus-4-no-thinking') {
+            response = await this.generateClaudeOpus4Config(anthropicMessages, false);
+        } else {
+            console.log('using thinking model')
+            response = await this.generateClaudeOpus4Config(anthropicMessages, true);
+        }
         let currentType: MessageType = 'TEXT';
         return {
             [Symbol.asyncIterator]: async function* () {
@@ -93,18 +106,19 @@ export class ClaudeService extends BaseAssistantService {
         };
     }
 
-    private async generateClaudeOpus4Config(messages: Anthropic.Messages.MessageParam[]) {
-        console.warn('generating claude response')
+    private async generateClaudeOpus4Config(messages: Anthropic.Messages.MessageParam[], includeThinking?: boolean) {
         return await this.client.messages.create({
             model: 'claude-opus-4-20250514',
             max_tokens: 20000,
             temperature: 1,
             messages,
             stream: true,
-            thinking: {
-                "type": "enabled",
-                "budget_tokens": 16000
-            }
+            ...(includeThinking ? {
+                thinking: {
+                    "type": "enabled",
+                    "budget_tokens": 16000
+                }
+            } : {})
         });
     }
     private mapToAnthropicRole(role: Role) {

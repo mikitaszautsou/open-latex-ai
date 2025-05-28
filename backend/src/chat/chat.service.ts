@@ -34,7 +34,7 @@ export class ChatService {
     if (!dto.title) {
       return this.prisma.chat.update({
         where: { id: chat.id },
-        data: { title: `Chat ${chat.id.slice(0, 8)}` },
+        data: { title: `New Chat` },
       });
     }
 

@@ -45,6 +45,13 @@ const ASSISTANTS: Assistant[] = [
     provider: "claude",
     model: "claude-4-opus-latest",
   },
+  {
+    id: "claude-no-thinking",
+    title: "Claude 4 Opus(no thinking)",
+    provider: "claude",
+    model: "claude-opus-4-no-thinking",
+  },
+  
   // {
   //   id: "gemini-2.5-pro",
   //   title: "Gemini 2.5-pro",

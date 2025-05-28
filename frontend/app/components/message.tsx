@@ -34,7 +34,6 @@ export type MessageProps = {
 
 function MessageComponent({ author, message, type, role, isNew, onDelete }: MessageProps) {
   const isUser = role === Role.USER;
-  console.log({ type });
   return (
     <ContextMenu>
       <ContextMenuTrigger className={clsx(
@@ -43,7 +42,7 @@ function MessageComponent({ author, message, type, role, isNew, onDelete }: Mess
           ? "bg-[#0061ff] text-white self-end"
           : "bg-[#ffffff]",
         !message && 'w-15 min-h-8 px-1.5 py-1.5 ml-1.5 !bg-[#e4e4ec] rounded-full flex justify-center items-center animate-[typing]',
-        type === MessageType.THINKING_SIGNATURE && '!hidden',
+        // type === MessageType.THINKING_SIGNATURE && '!hidden',
       )}>
 
         {

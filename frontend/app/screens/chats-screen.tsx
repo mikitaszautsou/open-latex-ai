@@ -25,8 +25,8 @@ export function ChatsScreen({
   const { mutate: createChatMutation, isPending } = useMutation({
     mutationFn: () =>
       chatApi.createChat({
-        provider: "gemini",
-        model: "gemini-2.5-pro-preview-03-25",
+        provider: "fireworks",
+        model: "deepseek",
       }),
     onSuccess: (newChat) => {
       queryClient.invalidateQueries({ queryKey: ["chats"] });

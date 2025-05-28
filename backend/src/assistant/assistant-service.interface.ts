@@ -30,7 +30,7 @@ export abstract class BaseAssistantService implements StreamingAssistService {
         let fullResponse = ''
         for await (const chunk of messageStream) {
             if (chunk.type === 'TEXT') {
-                fullResponse += chunk;
+                fullResponse += chunk.content;
             }
         }
         return fullResponse;

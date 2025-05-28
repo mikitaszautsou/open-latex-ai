@@ -125,7 +125,7 @@ export class MessageGateway implements OnGatewayConnection, OnGatewayDisconnect 
                 })
             }
 
-            const messageStream = (await assistantService.generateResponseStream(history));
+            const messageStream = (await assistantService.generateResponseStream(history, chat?.model));
             let fullResponse = ''
             let previousType: MessageType | null = null;
             let currentMessage: Message | null = null;
@@ -223,6 +223,7 @@ User Message: "${message}"`;
         const result = await assistantService.generateResponse([{ type: 'TEXT', role: 'USER', content: prompt }]); // Use the potentially faster 'flash' model
         const textResponse = result
 
+        console.log('textResponse', textResponse);
         // Simple parsing - adjust regex if needed for robustness
         const titleMatch = textResponse.match(/Title:\s*(.*)/);
         const emojiMatch = textResponse.match(/Emoji:\s*(.*)/);
